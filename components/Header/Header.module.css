@@ -1,33 +1,63 @@
 .header {
-
-
-    font-size: 16px;
-    line-height: 16px;
-
     background-color: var(--white);
-    padding: 15px 30px;
+    box-shadow: 0px -5px 10px 0px rgba(0, 0, 0, 0.5)
 }
 
 .logo {
-    justify-self: center;
-    padding: 20px 0px 10px 20px;
+    width: 220px;
 }
 
-.nav {
-    display: grid;
-    grid-template-columns: 4fr 4fr;
-    align-items: center;
-    width: 1100px;
-    margin: auto;
-}
-
-.nav ul {
-    list-style: none;
+.navbar {
+    width: 100%;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 7%;
 }
 
-.nav ul li a {
-    text-decoration: none;
+.ul {
+    flex: 1;
+    list-style: none;
+    text-align: center;
+}
+
+.ul li {
+    display: inline-block;
+    margin: 10px 20px;
+    font-size: 20px;
+
+
+}
+
+.ul li:hover {
     color: var(--bg-blue);
-    padding: 24px;
+}
+
+.phoneNumbers {
+    justify-self: end;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-right: 100px;
+    margin: 0px;
+}
+
+.freeCall {
+    align-self: flex-start;
+    grid-column: -2/-1;
+    color: var(--bg-blue);
+    font-size: 10px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.phoneNumbers p {
+    margin: 5px;
+}
+
+.login {
+    font-size: 18px;
+}
+
+.login:hover {
+    fill: var(--bg-blue);
 }
