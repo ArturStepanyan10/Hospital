@@ -5,6 +5,9 @@ export * from './Tag/Tag';
 
 export * from './Header/Header';
 export * from './Footer/Footer';
+export * from './Services/Services';
+export * from './Servic/servic';
+
 
 
 

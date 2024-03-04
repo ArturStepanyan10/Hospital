@@ -1,4 +1,4 @@
-import { Users } from './Users.interface';
+{/*import { Users } from './users.interface';
 import { Speciality } from './specialization.interface';
 
 export interface Doctor {
@@ -8,4 +8,5 @@ export interface Doctor {
     lastName: string;
     speciality: Speciality;
     position: string;
-}
+}*/}
+

@@ -19,13 +19,14 @@
     flex: 1;
     list-style: none;
     text-align: center;
+
 }
 
 .ul li {
     display: inline-block;
-    margin: 10px 20px;
     font-size: 20px;
-
+    cursor: pointer;
+    padding: 20px;
 
 }
 
@@ -60,4 +61,48 @@
 
 .login:hover {
     fill: var(--bg-blue);
+}
+
+/* Стили для выпадающего списка */
+.dropdown {
+    display: none;
+    position: absolute;
+    list-style-type: none;
+    background-color: #fff;
+    border: 1px solid var(--bg-blue);
+    padding: 5px;
+    margin-top: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    border-radius: 17px;
+    z-index: 1;
+}
+
+/* Стили для каждого элемента списка */
+.dropdown li {
+    color: var(--black);
+    padding: 8px 12px;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Стили для последнего элемента списка, чтобы убрать разделительную полоску */
+.dropdown li:last-child {
+    border-bottom: none;
+}
+
+/* Анимация для плавного появления */
+.dropdownParent:hover .dropdown {
+    display: block;
+
+}
+
+.dropdown::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    transform: translateX(-50%);
+    border-width: 7px;
+    border-style: solid;
+    border-color: transparent transparent var(--bg-blue);
+
 }
