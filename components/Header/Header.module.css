@@ -83,6 +83,7 @@
     color: var(--black);
     padding: 8px 12px;
     border-bottom: 1px solid #ccc;
+    display: block;
 }
 
 /* Стили для последнего элемента списка, чтобы убрать разделительную полоску */
@@ -93,16 +94,15 @@
 /* Анимация для плавного появления */
 .dropdownParent:hover .dropdown {
     display: block;
-
 }
 
 .dropdown::before {
     content: '';
     position: absolute;
     top: -15px;
+    left: 20%;
     transform: translateX(-50%);
     border-width: 7px;
     border-style: solid;
     border-color: transparent transparent var(--bg-blue);
-
 }

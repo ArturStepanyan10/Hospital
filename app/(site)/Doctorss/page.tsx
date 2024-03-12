@@ -1,9 +1,11 @@
+import { Doctors } from '@/components';
+import { useRouter, NextRouter } from 'next/router';
 
 
-export default function DoctorsPage() {
+export default function DoctorsPage({ params }: { params: { specialization: string } }) {
     return (
         <div>
-            {/* <DoctorList /> */}
+            <Doctors />
         </div>
     )
 }

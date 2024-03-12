@@ -7,6 +7,10 @@ export * from './Header/Header';
 export * from './Footer/Footer';
 export * from './Services/Services';
 export * from './Servic/servic';
+export * from './Doct/Doct';
+export * from './Doctors/Doctors';
+
+
 
 
 

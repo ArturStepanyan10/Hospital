@@ -9,11 +9,12 @@ import LoginIcon from './LoginIcon.svg';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Speciality } from '@/interfaces/specialization.interface';
+import { Doctor } from '@/interfaces/doctor.interface';
 
 
 export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
+
     const [specialization, setSpecialization] = useState<Speciality[]>([])
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
     useEffect(() => {
         // Fetch data from the API
@@ -26,10 +27,6 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
             .catch(error => console.error('Error fetching data:', error));
     }, []);
 
-    const handleCategoryClick = (specializationId: number) => {
-        setSelectedCategory(prevCategory => (prevCategory === specializationId ? null : specializationId));
-    };
-
     return (
         <header className={cn(className, styles.header)} {...props}>
             <div className={styles.navbar}>
@@ -37,13 +34,10 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
                 <ul className={styles.ul}>
                     <li className={styles.dropdownParent}>Врачи
                         <ul className={styles.dropdown}>
-                            {specialization.map(specialization => (
-                                <li key={specialization.Id}><Link href='/'>{specialization.SpecialName}</Link></li>))}
-                            <li><Link href='/'></Link></li>
-                            <li><Link href='/'></Link></li>
-                            <li><Link href='/'></Link></li>
-                            <li><Link href='/'></Link></li>
-
+                            {specialization.map(special => (
+                                <li key={special.id}><Link href={`/Doctorsss/${encodeURIComponent(special.specialName)}`}>
+                                    <span>{special.specialName}</span>
+                                </Link></li>))}
                         </ul>
                     </li>
                     <Link href='/'><li>Запись на прием</li></Link>

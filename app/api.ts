@@ -1,4 +1,6 @@
+import { Doctor } from '@/interfaces/doctor.interface';
 import { Service } from '@/interfaces/service.interface';
+import { Speciality } from '@/interfaces/specialization.interface';
 import { initMiddleware } from '@/lib/init-middleware';
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -27,13 +29,13 @@ export const getServices = async (): Promise<Service[]> => {
 
 };
 
-export const getSpecializations = async (): Promise<Service[]> => {
+export const getSpecializations = async (): Promise<Speciality[]> => {
     try {
         const response = await fetch('https://localhost:7138/api/specializations');
         if (!response.ok) {
             throw new Error('Failed to fetch services data');
         }
-        const services: Service[] = await response.json();
+        const services: Speciality[] = await response.json();
         return services;
     } catch (error) {
         console.error('Error fetching services data:', error);
@@ -41,6 +43,34 @@ export const getSpecializations = async (): Promise<Service[]> => {
     }
 
 
+};
+
+export const getDoctorsData = async (): Promise<Doctor[]> => {
+    try {
+        const response = await fetch('https://localhost:7025/api/doctors');
+        if (!response.ok) {
+            throw new Error('Failed to fetch doctors data');
+        }
+        const doctors: Doctor[] = await response.json();
+        return doctors;
+    } catch (error) {
+        console.error('Error fetching doctors data:', error);
+        return [];
+    }
+};
+
+export const getDoctorsBySpecialization = async (specialization: string) => {
+    try {
+        const response = await fetch(`https://localhost:7203/api/composite/doctors/${specialization}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch doctors data');
+        }
+        const doctors = await response.json();
+        return doctors;
+    } catch (error) {
+        console.error('Error fetching doctors data:', error);
+        return [];
+    }
 };
 
 //Получение списка специализаций
