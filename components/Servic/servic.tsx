@@ -8,15 +8,15 @@ import styles from './servic.module.css';
 import { Button } from '../Button/Button';
 
 
-export const Servic: React.FC<Service> = ({ serviceName, descriptionService, costService }) => (
+export const Servic: React.FC<Service> = ({ name, price, description }) => (
 
 
     <div className={styles.card}>
 
-        <h2 className={styles.servicName}>{serviceName}</h2>
-        <p className={styles.description}>{descriptionService}</p>
+        <h2 className={styles.servicName}>{name}</h2>
+        <p className={styles.description}>{description}</p>
         <Button className={styles.servicButton} appearance='primary'>Оплатить</Button>
-        <Tag className={styles.servicCost} appearance='m' color='green'>{costService} ₽</Tag>
+        <Tag className={styles.servicCost} size='m' color='green'>{price} ₽</Tag>
 
     </div>
 

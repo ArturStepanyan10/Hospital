@@ -1,11 +1,15 @@
 import { DoctRout } from '@/components/DoctRout/DoctRout';
-import { useRouter, NextRouter } from 'next/router';
 
 
-export default function DoctorsPage({ params }: { params: { specialName: string } }) {
+export default function DoctorsPage({ params }: { params: { specialization: string } }) {
+    const decodedSpecialization = decodeURIComponent(params.specialization)
+
     return (
+
         <div>
-            <DoctRout specialName={params.specialName} id={0} />
+            <h1>{decodedSpecialization}</h1>
+            <DoctRout specialization={params.specialization} />
+
         </div>
     )
 }

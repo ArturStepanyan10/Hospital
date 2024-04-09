@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    border: 2px solid #00CADE;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    background: white;
+    margin-top: 50px;
+
+}
+
+.info_doc p {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+
+
+.card_H1 {
+    text-align: center;
+    padding-bottom: 14px;
+}
+
+.label_card {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.datePicker {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 7px;
+}
+
+.button {
+    margin-top: 20px;
+    width: 30%;
+    border-radius: 20px;
+    font-size: 16px;
+}

@@ -8,19 +8,18 @@ import LogoIcon from './logoHosp.svg';
 import LoginIcon from './LoginIcon.svg';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Speciality } from '@/interfaces/specialization.interface';
-import { Doctor } from '@/interfaces/doctor.interface';
+import { Specialty } from '@/interfaces/specialization.interface';
 
 
 export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
 
-    const [specialization, setSpecialization] = useState<Speciality[]>([])
+    const [specialization, setSpecialization] = useState<Specialty[]>([])
 
     useEffect(() => {
         // Fetch data from the API
-        fetch('https://localhost:7138/api/specializations')
+        fetch("http://localhost:8080/api/specialty/all")
             .then(response => response.json())
-            .then((data: Speciality[]) => {
+            .then((data: Specialty[]) => {
                 console.log('Received data:', data);
                 setSpecialization(data);
             })
@@ -35,12 +34,12 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
                     <li className={styles.dropdownParent}>Врачи
                         <ul className={styles.dropdown}>
                             {specialization.map(special => (
-                                <li key={special.id}><Link href={`/Doctorsss/${encodeURIComponent(special.specialName)}`}>
-                                    <span>{special.specialName}</span>
+                                <li key={special.id}><Link href={`/Doctorsss/${encodeURIComponent(special.name)}`}>
+                                    <span>{special.name}</span>
                                 </Link></li>))}
                         </ul>
                     </li>
-                    <Link href='/'><li>Запись на прием</li></Link>
+                    <Link href='/'><li>Услуги</li></Link>
                     <Link href='/'><li>Мед. карта</li></Link>
                     <Link href='/'><li>О нас</li></Link>
                 </ul>
@@ -49,7 +48,7 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
                     <p>8 (904) 599-87-15</p>
                     <p className={styles.freeCall}>Бесплатный звонок по России</p>
                 </div>
-                <a href="../login/" target="_black"><LoginIcon className={styles.login} /></a>
+                <Link href="../sign-in/"><LoginIcon className={styles.login} /> </Link>
             </div>
         </header>
     );

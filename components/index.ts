@@ -9,6 +9,9 @@ export * from './Services/Services';
 export * from './Servic/servic';
 export * from './Doct/Doct';
 export * from './Doctors/Doctors';
+export * from './DoctRout/DoctRout';
+export * from './Input/Input';
+
 
 
 
