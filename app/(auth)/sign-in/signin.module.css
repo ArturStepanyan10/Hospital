@@ -36,8 +36,9 @@
     font-size: 18px;
 }
 
-.button:disabled {
-    cursor: auto;
+.formContainer button:disabled {
+    cursor: no-drop;
+    background-color: #23A7CF;
 }
 
 .formContainer button:hover {

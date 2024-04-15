@@ -6,14 +6,25 @@ import cn from 'classnames';
 import styles from './Header.module.css';
 import LogoIcon from './logoHosp.svg';
 import LoginIcon from './LoginIcon.svg';
+import LogoutIcon from './LogoutIcon.svg';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Specialty } from '@/interfaces/specialization.interface';
+import { eraseCookie, getCookie } from '@/utils/setCookie';
+import { useRouter } from 'next/navigation';
+
 
 
 export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
 
     const [specialization, setSpecialization] = useState<Specialty[]>([])
+    const [isLogin, setIsLogin] = useState(!!getCookie("accessToken"));
+    const router = useRouter();
+
+    useEffect(() => {
+        setIsLogin(!!getCookie("accessToken"));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getCookie("accessToken")]);
 
     useEffect(() => {
         // Fetch data from the API
@@ -25,6 +36,14 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
             })
             .catch(error => console.error('Error fetching data:', error));
     }, []);
+
+    function logout(e: MouseEvent) {
+        e.preventDefault();
+        eraseCookie("accessToken");
+        console.log("Выход из аккаунат успешно совершен!");
+        router.refresh();
+
+    }
 
     return (
         <header className={cn(className, styles.header)} {...props}>
@@ -48,7 +67,13 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
                     <p>8 (904) 599-87-15</p>
                     <p className={styles.freeCall}>Бесплатный звонок по России</p>
                 </div>
-                <Link href="../sign-in/"><LoginIcon className={styles.login} /> </Link>
+                {!isLogin && (
+                    <Link href="../sign-in/"><LoginIcon className={styles.login} placeholder="Войти" /> </Link>
+                )}
+
+                {isLogin && (
+                    <Link href="/"><LogoutIcon className={styles.logout} onClick={logout} placeholder="Выход" /> </Link>
+                )}
             </div>
         </header>
     );

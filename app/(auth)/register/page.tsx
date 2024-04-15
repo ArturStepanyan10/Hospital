@@ -7,10 +7,11 @@ import { setCookie } from '@/utils/setCookie';
 import Link from 'next/link';
 import styles from './register.module.css';
 import { useRouter } from 'next/navigation';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 
 const Register: React.FC = () => {
+    const [isLoading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [firstName, setName] = useState("");
@@ -19,6 +20,10 @@ const Register: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [snils, setSnils] = useState("");
     const router = useRouter();
+
+    useEffect(() => {
+        router.prefetch('/');
+    }, [router]);
 
 
     function handleEmailChange(e: ChangeEvent<HTMLInputElement>) {
@@ -64,7 +69,7 @@ const Register: React.FC = () => {
                 console.log("Successfully");
                 // Просто сохраняем токен как строку
                 setCookie("accessToken", token, 2);
-                router.push('/');
+                router.push('./sign-in');
             })
             .catch(error => {
                 console.error("Error during sign in:", error);
@@ -111,7 +116,9 @@ const Register: React.FC = () => {
                     placeholder="СНИЛС"
                     value={snils} /> <br />
 
-                <button type='submit'>Зарегистрироваться</button><br />
+                <button type='submit' disabled={isLoading}>
+                    {isLoading ? "Подождите..." : "Зарегистрироваться"}
+                </button><br />
                 <Link href="/sign-in">Войти</Link>
             </form>
         </div>
