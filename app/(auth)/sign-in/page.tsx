@@ -6,8 +6,8 @@ import { setCookie } from '@/utils/setCookie';
 import Link from 'next/link';
 import styles from './signin.module.css';
 import { useRouter } from 'next/navigation';
-
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { decodeJWTToken } from '@/utils/decodeJWT';
 
 const SignIn: React.FC = () => {
     const [isLoading, setLoading] = useState(false);
@@ -30,6 +30,7 @@ const SignIn: React.FC = () => {
         setPassword(e.target.value);
     }
 
+
     function FormHandler(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setLoading(true);
@@ -40,11 +41,28 @@ const SignIn: React.FC = () => {
             .then(token => {
                 console.log("Successfully");
                 setAccessToken(token);
+                const decodedToken = decodeJWTToken(token);
+                const userRoles = decodedToken.role;
 
-                // Просто сохраняем токен как строку
-                setCookie("accessToken", token, 2);
-                setLoading(false);
-                router.push('/');
+                if (userRoles === "ROLE_DOCTOR") {
+                    setAccessToken(token);
+                    setCookie("accessToken", token, 2);
+                    setLoading(false);
+                    router.push('/doctorSide');
+
+                } else if (userRoles === "ROLE_ADMIN") {
+                    setAccessToken(token);
+                    setCookie("accessToken", token, 2);
+                    setLoading(false);
+                    router.push('/adminSide');
+
+                } else if (userRoles === "ROLE_PATIENT") {
+                    setAccessToken(token);
+                    setCookie("accessToken", token, 2);
+                    setLoading(false);
+                    router.push('/');
+                }
+
             })
             .catch(error => {
                 console.error("Error during sign in:", error);
@@ -56,7 +74,7 @@ const SignIn: React.FC = () => {
     return (
         <div className={styles.formContainer}>
             <h1>Авторизация</h1>
-            <form onSubmit={FormHandler}>
+            <form onSubmit={FormHandler} >
                 <Input
                     onChange={handleEmailChange}
                     type="email"

@@ -69,7 +69,7 @@ const Register: React.FC = () => {
                 console.log("Successfully");
                 // Просто сохраняем токен как строку
                 setCookie("accessToken", token, 2);
-                router.push('./sign-in');
+                router.push('./login');
             })
             .catch(error => {
                 console.error("Error during sign in:", error);
@@ -119,7 +119,7 @@ const Register: React.FC = () => {
                 <button type='submit' disabled={isLoading}>
                     {isLoading ? "Подождите..." : "Зарегистрироваться"}
                 </button><br />
-                <Link href="/sign-in">Войти</Link>
+                <Link href="/login">Войти</Link>
             </form>
         </div>
     );

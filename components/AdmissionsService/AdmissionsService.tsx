@@ -1,52 +1,72 @@
 'use client'
 
-import { Doctor } from '@/interfaces/doctor.interface';
+import { Patient } from '@/interfaces/patient.interface';
+import styles from './AdmissionsService.module.css'
 import { useEffect, useState } from 'react';
-import styles from './Admissions.module.css'
+import { decodeJWTToken } from '@/utils/decodeJWT';
+import { getCookie } from '@/utils/setCookie';
+import { Service } from '@/interfaces/service.interface';
 import { Button } from '../Button/Button';
-import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Select from 'react-select';
+
+
 
 
 interface IdProps {
     id: number;
-}
+};
 
-export const Admission: React.FC<IdProps> = ({ id }) => {
-    const [doctor, setDoctor] = useState<Doctor>();
+export const AdmissionService: React.FC<IdProps> = ({ id }) => {
+    const [patient, setPatient] = useState<Patient>();
+    const [service, setService] = useState<Service>();
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
     const Today = new Date();
     const nextWeek = new Date();
-    nextWeek.setDate(Today.getDate() + 7);
+    nextWeek.setDate(Today.getDate() + 14);
 
     useEffect(() => {
-        const fetchDoctor = async () => {
+        const fetchPatient = async () => {
+            const token = getCookie("accessToken");
+            if (!id || !token) return;
+
             try {
-                const response = await fetch(`http://localhost:8080/api/doctor/search/${id}`);
+                const decodedToken = decodeJWTToken(token);
+                const response = await fetch(`http://localhost:8080/api/patient/search/${decodedToken.id}`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                const doctorData = await response.json();
-
-                const specialtyResponse = await fetch(`http://localhost:8080/api/specialty/${doctorData.specialtyId}`);
-                const specialtyData = await specialtyResponse.json();
-                doctorData.specialty = specialtyData;
-
-                setDoctor(doctorData);
-
+                const patientData = await response.json();
+                setPatient(patientData);
             } catch (error) {
-                console.error('Error fetching doctor:', error);
+                console.error('Error fetching patient:', error);
             }
         };
 
-        if (id) {
-            fetchDoctor();
-        }
+        fetchPatient();
+    }, [id]);
+
+    useEffect(() => {
+        const fetchService = async () => {
+            try {
+                const responseService = await fetch(`http://localhost:8080/api/medical-service/search/${id}`);
+
+                if (!responseService.ok) {
+                    throw new Error(`HTTP error! Status: ${responseService.status}`);
+                }
+
+                const serviceData = await responseService.json();
+                setService(serviceData);
+            } catch (error) {
+                console.error('Error fetching service:', error);
+            };
+        };
+        fetchService();
     }, [id]);
 
 
@@ -75,14 +95,9 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
 
     };
 
-    if (!doctor) {
-        return <div>Doctor not found</div>;
-
-    }
-
     const submitAdmission = async () => {
         try {
-            if (!doctor) {
+            if (!patient) {
                 console.error('Doctor data is not yet available.');
                 return;
             }
@@ -93,10 +108,10 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    doctorId: id,
-                    //patientId: id, сделай также как и в AdmissionService
+                    patientId: patient.id,
                     date: selectedDate,
-                    time: selectedTime
+                    time: selectedTime,
+                    serviceId: id
                 }),
             });
         } catch (error) {
@@ -109,11 +124,10 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
         <div className={styles.container}>
             <div className={styles.card}>
                 <div className={styles.info_doc}>
-                    <h1 className={styles.card_H1}>Запись на прием</h1>
-                    <p>Врач: {`${doctor.lastName} ${doctor.firstName}`}</p>
-                    <p>Кабинет: №{doctor.office}</p>
-                    <p>Должность: {doctor.position}</p>
-                    <p>Специализация: {doctor.specialty.name}</p>
+                    <h1 className={styles.card_H1}>Запись на услугу</h1>
+                    <p>Название услуги: {`${service?.name}`}</p>
+                    <p>Пациент: {`${patient?.lastName} ${patient?.firstName}`}</p>
+                    <p>Стоимость услуги: {`${service?.price} ₽`}</p>
                 </div>
                 <div>
                     <label className={styles.label_card}>Дата:</label>
@@ -125,16 +139,17 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                         maxDate={nextWeek}
                     />
                 </div>
-
                 <div>
                     <label className={styles.label_card}>Время:</label>
                     <Select className={styles.sel} options={timeOptions} onChange={handleTimeChange} />
                 </div>
-                <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>Записаться</Button>
+                <Button type='submit' onClick={submitAdmission} className={styles.button} appearance='primary'>
+                    Оплатить
+                </Button>
+
             </div>
         </div>
     );
 };
-
 
 
