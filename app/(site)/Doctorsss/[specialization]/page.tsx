@@ -1,4 +1,5 @@
-import { DoctRout } from '@/components/DoctRout/DoctRout';
+import { DoctRout } from '../../../../components'
+
 
 
 export default function DoctorsPage({ params }: { params: { specialization: string } }) {

@@ -9,7 +9,7 @@
     padding: 20px;
     border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 500px;
+    width: 800px;
     background: white;
     margin-top: 50px;
 
@@ -19,8 +19,6 @@
     font-size: 18px;
     font-weight: 500;
 }
-
-
 
 .card_H1 {
     text-align: center;
@@ -41,8 +39,28 @@
 }
 
 .button {
-    margin-top: 15px;
+    margin-top: 20px;
     width: 30%;
     border-radius: 20px;
     font-size: 16px;
+}
+
+.textarea {
+    resize: none;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    height: 100px;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 20px;
+    border-color: #bfbfbf;
+}
+
+.textarea:hover {
+    border-color: #00CADE;
+}
+
+.textarea::-webkit-scrollbar {
+    width: 0px;
 }

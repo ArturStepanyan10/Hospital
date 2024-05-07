@@ -1,13 +1,14 @@
 'use client'
 
 
-import { Input } from '@/components/Input/Input';
-import { postFetch } from '@/utils/Fetch';
-import { setCookie } from '@/utils/setCookie';
+
 import Link from 'next/link';
 import styles from './register.module.css';
 import { useRouter } from 'next/navigation';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { postFetch } from '../../../utils/Fetch';
+import { setCookie } from '../../../utils/setCookie';
+import { Input } from '../../../components';
 
 
 const Register: React.FC = () => {
@@ -69,7 +70,7 @@ const Register: React.FC = () => {
                 console.log("Successfully");
                 // Просто сохраняем токен как строку
                 setCookie("accessToken", token, 2);
-                router.push('./login');
+                router.push('./sign-in');
             })
             .catch(error => {
                 console.error("Error during sign in:", error);
@@ -119,7 +120,7 @@ const Register: React.FC = () => {
                 <button type='submit' disabled={isLoading}>
                     {isLoading ? "Подождите..." : "Зарегистрироваться"}
                 </button><br />
-                <Link href="/login">Войти</Link>
+                <Link href="/sign-in">Войти</Link>
             </form>
         </div>
     );

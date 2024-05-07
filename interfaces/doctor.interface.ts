@@ -9,7 +9,8 @@ export interface Doctor {
     lastName: string;
     specialty: Specialty;
     position: string;
-    office: string
+    office: string;
+    work_experience: number;
 }
 
 

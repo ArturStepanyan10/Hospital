@@ -1,8 +1,8 @@
 'use client'
 
-import { HeaderProps } from './HeaderForDoct.props';
+import { HeaderProps } from './HeaderForAdmin.props';
 import cn from 'classnames';
-import styles from './HeaderForDoct.module.css';
+import styles from './HeaderForAdmin.module.css';
 import LogoIcon from './logoHosp.svg';
 import LoginIcon from './LoginIcon.svg';
 import LogoutIcon from './LogoutIcon.svg';
@@ -12,15 +12,13 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { eraseCookie, getCookie } from '../../utils/setCookie';
 import { decodeJWTToken } from '../../utils/decodeJWT';
-import { Patient } from '../../interfaces/patient.interface';
 
 
 
-export const HeaderForDoct = ({ className, ...props }: HeaderProps): JSX.Element => {
+export const HeaderForAdmin = ({ className, ...props }: HeaderProps): JSX.Element => {
     const [isLogin, setIsLogin] = useState(!!getCookie("accessToken"));
     const router = useRouter();
     const [userLastName, setUserLastName] = useState<string>("");
-    const [docId, setDocId] = useState<number>(0);
 
     useEffect(() => {
         setIsLogin(!!getCookie("accessToken"));
@@ -32,7 +30,6 @@ export const HeaderForDoct = ({ className, ...props }: HeaderProps): JSX.Element
         if (token) {
             const decodedToken = decodeJWTToken(token);
             setUserLastName(decodedToken.lastName);
-            setDocId(decodedToken.id);
         }
     }, []);
 
@@ -43,21 +40,20 @@ export const HeaderForDoct = ({ className, ...props }: HeaderProps): JSX.Element
         router.refresh();
     }
 
-
     return (
         <header className={cn(className, styles.header)} {...props}>
             <div className={styles.navbar}>
-                <Link href='/doctorSide'><LogoIcon className={styles.logo} /></Link>
+                <Link href='/adminSide'><LogoIcon className={styles.logo} /></Link>
                 <ul className={styles.ul}>
-                    <Link href='/doctorSide'><li>Пациенты</li></Link>
-                    <Link href={`doctorSide/Schedule/${docId}`}><li>Расписание</li></Link>
+                    <Link href='/'><li>Врачи</li></Link>
+                    <Link href='/'><li>Расписание</li></Link>
                 </ul>
                 {!isLogin && (
                     <Link href="../sign-in/"><LoginIcon className={styles.login} placeholder="Войти" /> </Link>
                 )}
                 {isLogin && (
                     <div>
-                        <Link href="/doctorSide">
+                        <Link href="/">
                             <LogoutIcon className={styles.logout} onClick={logout} placeholder="Выход" />
                         </Link>
                         <div>{userLastName}</div>

@@ -12,7 +12,7 @@ export * from './Doctors/Doctors';
 export * from './DoctRout/DoctRout';
 export * from './Input/Input';
 export * from './HeaderForDoct/HeaderForDoct';
-export * from './AdmissionsService/AdmissionsService';
+
 
 
 

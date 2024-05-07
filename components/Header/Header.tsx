@@ -8,12 +8,11 @@ import LoginIcon from './LoginIcon.svg';
 import LogoutIcon from './LogoutIcon.svg';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Specialty } from '@/interfaces/specialization.interface';
-import { eraseCookie, getCookie } from '@/utils/setCookie';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { decodeJWTToken } from '@/utils/decodeJWT';
-
+import { Specialty } from '../../interfaces/specialization.interface';
+import { eraseCookie, getCookie } from '../../utils/setCookie';
+import { decodeJWTToken } from '../../utils/decodeJWT';
 
 
 export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
@@ -22,6 +21,8 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
     const [isLogin, setIsLogin] = useState(!!getCookie("accessToken"));
     const [userLastName, setUserLastName] = useState<string>("");
     const router = useRouter();
+    const isUserLoggedIn = !!getCookie("accessToken");
+
 
     useEffect(() => {
         setIsLogin(!!getCookie("accessToken"));
@@ -71,8 +72,13 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
                         </ul>
                     </li>
                     <Link href='/'><li>Услуги</li></Link>
-                    <Link href='/'><li>Мед. карта</li></Link>
-                    <Link href='/'><li>О нас</li></Link>
+
+                    {isUserLoggedIn ? (
+                        <Link href='/MedCard'><li>Мед. карта</li></Link>) : (
+                        <Link href="../sign-in/"><li>Мед. карта</li></Link>
+                    )}
+
+                    <Link href='/About'><li>О нас</li></Link>
                 </ul>
                 <div className={styles.phoneNumbers}>
                     <p>8 (900) 589-52-17</p>

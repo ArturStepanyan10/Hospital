@@ -1,13 +1,16 @@
 'use client';
 
-import { Input } from '@/components/Input/Input';
-import { postFetch } from '@/utils/Fetch';
-import { setCookie } from '@/utils/setCookie';
+
 import Link from 'next/link';
 import styles from './signin.module.css';
 import { useRouter } from 'next/navigation';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { decodeJWTToken } from '@/utils/decodeJWT';
+import { postFetch } from '../../../utils/Fetch';
+import { decodeJWTToken } from '../../../utils/decodeJWT';
+import { setCookie } from '../../../utils/setCookie';
+import { Input } from '../../../components';
+
+
 
 const SignIn: React.FC = () => {
     const [isLoading, setLoading] = useState(false);

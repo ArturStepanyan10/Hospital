@@ -1,12 +1,17 @@
 'use client'
 
-import { Doctor } from '@/interfaces/doctor.interface';
+
 import { useEffect, useState } from 'react';
 import styles from './Admissions.module.css'
 import { Button } from '../Button/Button';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Doctor } from '../../interfaces/doctor.interface';
+import { Patient } from '../../interfaces/patient.interface';
+import { getCookie } from '../../utils/setCookie';
+import { decodeJWTToken } from '../../utils/decodeJWT';
+import { useRouter } from 'next/navigation';
 
 
 interface IdProps {
@@ -14,13 +19,40 @@ interface IdProps {
 }
 
 export const Admission: React.FC<IdProps> = ({ id }) => {
+    const [patient, setPatient] = useState<Patient>();
     const [doctor, setDoctor] = useState<Doctor>();
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string>('');
+
+    const router = useRouter();
 
     const Today = new Date();
     const nextWeek = new Date();
     nextWeek.setDate(Today.getDate() + 7);
+
+    useEffect(() => {
+        const fetchPatient = async () => {
+            const token = getCookie("accessToken");
+            if (!id || !token) return;
+
+            try {
+                const decodedToken = decodeJWTToken(token);
+                const response = await fetch(`http://localhost:8080/api/patient/search/${decodedToken.id}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const patientData = await response.json();
+                setPatient(patientData);
+            } catch (error) {
+                console.error('Error fetching patient:', error);
+            }
+        };
+
+        fetchPatient();
+    }, [id]);
 
     useEffect(() => {
         const fetchDoctor = async () => {
@@ -50,6 +82,8 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
     }, [id]);
 
 
+
+
     const handleDateChange = (date: Date | null) => {
         setSelectedDate(date);
     };
@@ -66,13 +100,15 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
 
         for (let hour = startTime; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += interval) {
-                const time = `${hour}:${minute === 0 ? '00' : minute}`;
+                const formattedHour = hour.toString().padStart(2, '0'); // Преобразование часов в двузначное число
+                const formattedMinute = minute === 0 ? '00' : minute.toString(); // Преобразование минут в двузначное число
+                const time = `${formattedHour}:${formattedMinute}`;
                 timeOptions.push({ label: time, value: time });
+
             }
         }
 
         return timeOptions;
-
     };
 
     if (!doctor) {
@@ -87,6 +123,11 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                 return;
             }
 
+            if (!selectedDate || !selectedTime) {
+                console.error('Please select date and time.');
+                return;
+            }
+
             const response = await fetch('http://localhost:8080/api/admissions/create', {
                 method: 'POST',
                 headers: {
@@ -94,13 +135,29 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                 },
                 body: JSON.stringify({
                     doctorId: id,
-                    //patientId: id, сделай также как и в AdmissionService
+                    patientId: patient?.id,
                     date: selectedDate,
-                    time: selectedTime
+                    time: selectedTime,
+                    serviceId: 1
                 }),
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+
+            console.log('Admission created successfully!');
+            setTimeout(() => {
+                router.back(); // Вернуться назад через некоторое время
+            }, 3000);
+            // Обработка успешного создания записи на прием
+
+            // Можно также обновить интерфейс или перенаправить пользователя на другую страницу
         } catch (error) {
             console.error('Error:', error);
+            // Обработка ошибки при создании записи на прием
+            // Можно вывести сообщение об ошибке или предложить повторить запрос
         }
     };
 
@@ -130,11 +187,21 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                     <label className={styles.label_card}>Время:</label>
                     <Select className={styles.sel} options={timeOptions} onChange={handleTimeChange} />
                 </div>
+                {successMessage && (
+                    <div className={styles.successMessage}>{successMessage}</div>
+                )}
                 <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>Записаться</Button>
             </div>
         </div>
     );
 };
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,55 @@
+.cardPatient {
+    width: 40%;
+    margin: 40px auto;
+    /* Автоматическое выравнивание по центру по горизонтали */
+    padding: 0px 20px 20px 20px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    border: 2px solid var(--bg-blue);
+}
+
+.card_H1 {
+    text-align: center;
+    padding-bottom: 14px;
+}
+
+.datePicker {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 7px;
+}
+
+.text {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+
+.scheduleTable {
+    width: 70%;
+    border-collapse: collapse;
+}
+
+.scheduleTable th,
+.scheduleTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.scheduleTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: left;
+}
+
+.scheduleTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.scheduleTable tbody tr:hover {
+    background-color: #ddd;
+}

@@ -1,9 +1,9 @@
-import { Doctor } from '@/interfaces/doctor.interface';
-import { Service } from '@/interfaces/service.interface';
-import { Specialty } from '@/interfaces/specialization.interface';
-import { initMiddleware } from '@/lib/init-middleware';
+
 import Cors from 'cors';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { Service } from '../interfaces/service.interface';
+import { initMiddleware } from '../lib/init-middleware';
+import { Specialty } from '../interfaces/specialization.interface';
+import { Doctor } from '../interfaces/doctor.interface';
 
 
 const corsMiddleware = initMiddleware(

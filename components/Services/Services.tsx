@@ -1,9 +1,10 @@
 'use client'
 
-import { getServices } from '@/app/api';
-import { Service } from '@/interfaces/service.interface';
+
 import React, { useEffect, useState } from 'react';
 import { Servic } from '../Servic/servic';
+import { getServices } from '../../app/api';
+import { Service } from '../../interfaces/service.interface';
 
 export const Services = () => {
     const [services, setServices] = useState<Service[]>([]);
@@ -25,7 +26,7 @@ export const Services = () => {
     return (
         <>
             {error && <p>{error}</p>}
-            {services.map((service) => (
+            {services.slice(1).map((service) => ( // Исключаем первую услугу из вывода
                 <Servic key={service.id} {...service} />
             ))}
         </>

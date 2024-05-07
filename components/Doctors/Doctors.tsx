@@ -2,10 +2,10 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { getDoctorsData } from '@/app/api';
 
-import { Doctor } from '@/interfaces/doctor.interface';
 import { Doct } from '../Doct/Doct';
+import { Doctor } from '../../interfaces/doctor.interface';
+import { getDoctorsData } from '../../app/api';
 
 export const Doctors: React.FC = () => {
     const [doctor, setDoctor] = useState<Doctor[]>([]);

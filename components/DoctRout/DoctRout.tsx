@@ -1,9 +1,10 @@
 'use client'
 
-import { getDoctorsBySpecialization } from '@/app/api';
-import { Doctor } from '@/interfaces/doctor.interface';
+
 import { useEffect, useState } from 'react';
 import { Doct } from '../Doct/Doct';
+import { Doctor } from '../../interfaces/doctor.interface';
+import { getDoctorsBySpecialization } from '../../app/api';
 
 
 interface SpecialProps {

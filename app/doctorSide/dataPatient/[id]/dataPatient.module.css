@@ -1,4 +1,4 @@
-.medcard {
+.cardPatient {
     width: 80%;
     margin: 10px 0px 5px 10px;
     padding: 0px 20px 20px 20px;
@@ -9,24 +9,12 @@
     border: 2px solid var(--bg-blue);
 }
 
-
 .patientinfo {
     padding-top: 0px;
     font-size: 17px;
 }
 
-.patientinfo h2 {
-    margin-bottom: 10px;
-}
-
-.appointments {
-    margin-top: 20px;
-}
-
-.doctorInfo {
-    background-color: var(--bg-blue);
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 8px;
-
+.button {
+    margin-top: 5px;
+    border-radius: 20px;
 }
