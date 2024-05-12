@@ -2,55 +2,67 @@
 
 import styles from './schedule.module.css'
 import { useEffect, useState } from 'react';
-import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useRouter } from 'next/navigation';
 import { Admission } from '../../../../interfaces/admission.interface';
+import { Schedule } from '../../../../interfaces/schedules.interface';
+import { format } from 'date-fns';
+import { Scheds } from '../../../../interfaces/scheds.interface';
 
-const Schedule = ({ params }: { params: { id: number } }) => {
+const Schedules = ({ params }: { params: { id: number } }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [admissions, setAdmissions] = useState<Admission[]>([]);
+    const [schedules, setSchedules] = useState<Schedule>();
+    const [scheds, setScheds] = useState<Scheds[]>([]);
 
     const Today = new Date();
+    const formattedDate = format(Today, 'yyyy-MM-dd');
+
+
     const nextWeek = new Date();
-    nextWeek.setDate(Today.getDate() + 3);
+    nextWeek.setDate(Today.getDate());
 
     const handleDateChange = (date: Date | null) => {
         setSelectedDate(date);
     };
 
     useEffect(() => {
-        const fetchAdmissionsByDoctorAndDate = async () => {
-            if (!params.id || !selectedDate) return;
-
+        const fetchScheduleByDate = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/admissions/all`);
+                const fetchDataSchedule = await fetch(`http://localhost:8080/api/schedule/doctorForPatient/${params.id}?date=${formattedDate}`)
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                if (!fetchDataSchedule.ok) {
+                    throw new Error(`HTTP error! Status: ${fetchDataSchedule.status}`);
                 }
 
-                const admissionsData = await response.json();
-
-                // Фильтруем приемы по ID врача и выбранной дате
-                const filteredAdmissions = admissionsData.filter((admission: Admission) => {
-                    const admissionDate = new Date(admission.date);
-                    admissionDate.setHours(0, 0, 0, 0); // Устанавливаем время на полночь, чтобы сравнивать только даты
-                    const selectedDateWithoutTime = new Date(selectedDate);
-                    selectedDateWithoutTime.setHours(0, 0, 0, 0); // То же самое для выбранной даты
-                    return admission.doctorId === Number(params.id) && admissionDate.getTime() === selectedDateWithoutTime.getTime();
-                });
-
-                setAdmissions(filteredAdmissions);
-
+                const scheduleData = await fetchDataSchedule.json();
+                setSchedules(scheduleData);
             } catch (error) {
-                console.error('Error fetching admissions:', error);
+                console.error('Error fetching schedule:', error);
             }
         };
+        fetchScheduleByDate();
 
-        fetchAdmissionsByDoctorAndDate();
-    }, [params.id, selectedDate]);
+    }, [params.id, formattedDate]);
+
+    useEffect(() => {
+        const fetchScheduleByDateDoctor = async () => {
+            try {
+                const fetchDataSchedule = await fetch(`http://localhost:8080/api/schedule/generate/doctor/${params.id}?date=${formattedDate}`)
+
+                if (!fetchDataSchedule.ok) {
+                    throw new Error(`HTTP error! Status: ${fetchDataSchedule.status}`);
+                }
+
+                const scheduleData = await fetchDataSchedule.json();
+                setScheds(scheduleData);
+            } catch (error) {
+                console.error('Error fetching schedule:', error);
+            }
+        };
+        fetchScheduleByDateDoctor();
+
+    }, [params.id, formattedDate]);
 
     return (
         <div className={styles.cardPatient}>
@@ -64,6 +76,10 @@ const Schedule = ({ params }: { params: { id: number } }) => {
                 minDate={Today}
                 maxDate={nextWeek}
             />
+            <div>
+                <p>Рабочий день: {schedules?.startTime.toString()} - {schedules?.endTime.toString()}</p>
+                <p className={styles.info}>{schedules?.additionalInfo}</p>
+            </div>
 
             <p className={styles.text}>Приемы:</p>
 
@@ -72,13 +88,16 @@ const Schedule = ({ params }: { params: { id: number } }) => {
                     <tr>
                         <th>№</th>
                         <th>Время</th>
+                        <th>Пациент</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {admissions.map((admission, index) => (
-                        <tr key={admission.id}>
+                    {scheds.map((sched, index) => (
+                        <tr key={sched.id}>
                             <td>{index + 1}</td>
-                            <td>{String(admission.time)}</td>
+                            <td>{String(sched.time)}</td>
+                            <td>{sched.patientLastName} {sched.patientFirstName}</td>
+
                         </tr>
                     ))}
                 </tbody>
@@ -87,4 +106,4 @@ const Schedule = ({ params }: { params: { id: number } }) => {
     );
 }
 
-export default Schedule;
+export default Schedules;

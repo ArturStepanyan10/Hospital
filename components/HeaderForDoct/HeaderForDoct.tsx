@@ -12,37 +12,43 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { eraseCookie, getCookie } from '../../utils/setCookie';
 import { decodeJWTToken } from '../../utils/decodeJWT';
-import { Patient } from '../../interfaces/patient.interface';
 
 
 
 export const HeaderForDoct = ({ className, ...props }: HeaderProps): JSX.Element => {
-    const [isLogin, setIsLogin] = useState(!!getCookie("accessToken"));
+    const [isLogin, setIsLogin] = useState(false);
     const router = useRouter();
     const [userLastName, setUserLastName] = useState<string>("");
     const [docId, setDocId] = useState<number>(0);
 
     useEffect(() => {
-        setIsLogin(!!getCookie("accessToken"));
+        if (typeof window !== 'undefined') {
+            setIsLogin(!!getCookie("accessToken"));
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getCookie("accessToken")]);
 
     useEffect(() => {
-        const token = getCookie("accessToken");
-        if (token) {
-            const decodedToken = decodeJWTToken(token);
-            setUserLastName(decodedToken.lastName);
-            setDocId(decodedToken.id);
+        if (typeof window !== 'undefined') {
+            const token = getCookie("accessToken");
+            if (token) {
+                const decodedToken = decodeJWTToken(token);
+                setUserLastName(decodedToken.lastName);
+                setDocId(decodedToken.id);
+            }
         }
     }, []);
 
     function logout(e: MouseEvent) {
         e.preventDefault();
-        eraseCookie("accessToken");
-        console.log("Выход из аккауната успешно совершен!");
-        router.refresh();
-    }
+        const confirmed = window.confirm("Точно ли хотите выйти ?");
+        if (confirmed) {
+            eraseCookie("accessToken");
+            console.log("Выход из аккаунта успешно выполнен!");
+            router.refresh();
+        }
 
+    }
 
     return (
         <header className={cn(className, styles.header)} {...props}>

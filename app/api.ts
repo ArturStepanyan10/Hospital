@@ -4,6 +4,8 @@ import { Service } from '../interfaces/service.interface';
 import { initMiddleware } from '../lib/init-middleware';
 import { Specialty } from '../interfaces/specialization.interface';
 import { Doctor } from '../interfaces/doctor.interface';
+import { Patient } from '../interfaces/patient.interface';
+import { Schedule } from '../interfaces/schedules.interface';
 
 
 const corsMiddleware = initMiddleware(
@@ -41,7 +43,6 @@ export const getSpecializations = async (): Promise<Specialty[]> => {
         return [];
     }
 
-
 };
 
 export const getDoctorsData = async (): Promise<Doctor[]> => {
@@ -54,6 +55,21 @@ export const getDoctorsData = async (): Promise<Doctor[]> => {
         return doctors;
     } catch (error) {
         console.error('Error fetching doctors data:', error);
+        return [];
+    }
+};
+
+
+export const getPatientsData = async (): Promise<Patient[]> => {
+    try {
+        const response = await fetch('http://localhost:8080/api/patient/all');
+        if (!response.ok) {
+            throw new Error('Failed to fetch patients data');
+        }
+        const patients: Patient[] = await response.json();
+        return patients;
+    } catch (error) {
+        console.error('Error fetching patients data:', error);
         return [];
     }
 };

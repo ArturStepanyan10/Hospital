@@ -3,7 +3,7 @@ import { Users } from './users.interface';
 
 export interface Patient {
     id: number;
-    user: Users;
+    userId: number;
     firstName: string;
     lastName: string;
     age: number;

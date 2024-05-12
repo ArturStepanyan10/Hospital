@@ -18,14 +18,16 @@ import { decodeJWTToken } from '../../utils/decodeJWT';
 export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
 
     const [specialization, setSpecialization] = useState<Specialty[]>([])
-    const [isLogin, setIsLogin] = useState(!!getCookie("accessToken"));
+    const [isLogin, setIsLogin] = useState(false);
     const [userLastName, setUserLastName] = useState<string>("");
     const router = useRouter();
     const isUserLoggedIn = !!getCookie("accessToken");
 
 
     useEffect(() => {
-        setIsLogin(!!getCookie("accessToken"));
+        if (typeof window !== 'undefined') {
+            setIsLogin(!!getCookie("accessToken"));
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getCookie("accessToken")]);
 
@@ -39,29 +41,32 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
             })
             .catch(error => console.error('Error fetching data:', error));
 
-        const token = getCookie("accessToken");
-        if (token) {
-            const decodedToken = decodeJWTToken(token);
-            setUserLastName(decodedToken.lastName);
-        };
+        if (typeof window !== 'undefined') {
+            const token = getCookie("accessToken");
+            if (token) {
+                const decodedToken = decodeJWTToken(token);
+                setUserLastName(decodedToken.lastName);
+            }
+        }
     }, []);
 
-    function logout(e: MouseEvent) {
+    function logout(e: React.MouseEvent) {
         e.preventDefault();
         const confirmed = window.confirm("Точно ли хотите выйти ?");
         if (confirmed) {
             eraseCookie("accessToken");
             console.log("Выход из аккаунта успешно выполнен!");
-            router.refresh();
+            if (typeof window !== 'undefined') {
+                router.refresh();
+            }
         }
-
     }
 
 
     return (
         <header className={cn(className, styles.header)} {...props}>
             <div className={styles.navbar}>
-                <Link href='../'><LogoIcon className={styles.logo} /></Link>
+                <Link href='/'><LogoIcon className={styles.logo} /></Link>
                 <ul className={styles.ul}>
                     <li className={styles.dropdownParent}>Врачи
                         <ul className={styles.dropdown}>
@@ -73,12 +78,7 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
                     </li>
                     <Link href='/'><li>Услуги</li></Link>
 
-                    {isUserLoggedIn ? (
-                        <Link href='/MedCard'><li>Мед. карта</li></Link>) : (
-                        <Link href="../sign-in/"><li>Мед. карта</li></Link>
-                    )}
-
-                    <Link href='/About'><li>О нас</li></Link>
+                    <li onClick={() => router.push(isUserLoggedIn ? "/MedCard" : "/sign-in")}>Мед. карта</li>
                 </ul>
                 <div className={styles.phoneNumbers}>
                     <p>8 (900) 589-52-17</p>

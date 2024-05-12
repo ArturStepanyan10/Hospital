@@ -1,0 +1,91 @@
+.formContainer {
+    max-width: 400px;
+    height: 650px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid #00CADE;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+}
+
+.formContainer h1 {
+    color: #3B434E;
+    text-align: center;
+}
+
+.formContainer input[type="text"] {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    width: 360px;
+}
+
+.formContainer button {
+    background-color: #3BBCE3;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 25px;
+    padding: 13px;
+    border-radius: 20px;
+    width: 100%;
+    border: none;
+    font-size: 18px;
+}
+
+.formContainer button:disabled {
+    cursor: no-drop;
+    background-color: #23A7CF;
+}
+
+.formContainer button:hover {
+    background-color: #23A7CF;
+}
+
+.card_H1 {
+    text-align: center;
+    padding-bottom: 14px;
+}
+
+.label_card {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.datePicker {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 7px;
+    align-items: center;
+}
+
+.button {
+    margin-top: 20px;
+    width: 30%;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+.up {
+    color: #00CADE;
+    text-align: center;
+
+}
+
+.up:hover {
+    color: #055057;
+}
+
+.del {
+    color: rgb(163, 44, 44);
+    text-align: center;
+}
+
+.del:hover {
+    color: rgb(92, 26, 26);
+}

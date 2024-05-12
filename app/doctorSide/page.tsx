@@ -55,7 +55,7 @@ const DoctorPage = () => {
     return (
         <>
             <h1>Пациенты</h1>
-            <div className={styles.doctorContainer}>
+            <div>
                 {uniquePatients.map((patient, index) => (
                     <div key={index} className={styles.patientCard}>
                         <h2 className={styles.patientName}>{patient.firstName} {patient.lastName}</h2>

@@ -12,6 +12,7 @@ import { Patient } from '../../interfaces/patient.interface';
 import { getCookie } from '../../utils/setCookie';
 import { decodeJWTToken } from '../../utils/decodeJWT';
 import { useRouter } from 'next/navigation';
+import { Specialty } from '../../interfaces/specialization.interface';
 
 
 interface IdProps {
@@ -21,14 +22,17 @@ interface IdProps {
 export const Admission: React.FC<IdProps> = ({ id }) => {
     const [patient, setPatient] = useState<Patient>();
     const [doctor, setDoctor] = useState<Doctor>();
+    const [specialty, setSpecialty] = useState<string>("");
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
 
     const router = useRouter();
 
     const Today = new Date();
     const nextWeek = new Date();
+    const currentTime = new Date();
     nextWeek.setDate(Today.getDate() + 7);
 
     useEffect(() => {
@@ -64,11 +68,9 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                 }
 
                 const doctorData = await response.json();
-
                 const specialtyResponse = await fetch(`http://localhost:8080/api/specialty/${doctorData.specialtyId}`);
                 const specialtyData = await specialtyResponse.json();
                 doctorData.specialty = specialtyData;
-
                 setDoctor(doctorData);
 
             } catch (error) {
@@ -81,7 +83,26 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
         }
     }, [id]);
 
+    useEffect(() => {
+        const fetchSpecialty = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/specialty/${doctor?.specialtyId}`);
 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const specialtyData = await response.json();
+                setSpecialty(specialtyData.name);
+            } catch (error) {
+                console.error('Error fetching specialty:', error);
+            }
+        };
+
+        if (doctor?.specialtyId) {
+            fetchSpecialty();
+        }
+    }, [doctor?.specialtyId]);
 
 
     const handleDateChange = (date: Date | null) => {
@@ -128,6 +149,12 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                 return;
             }
 
+            const selectedDateTime = selectedDate ? new Date(selectedDate.setHours(parseInt(selectedTime!.split(":")[0]), parseInt(selectedTime!.split(":")[1]))) : null;
+            if (selectedDateTime && selectedDateTime <= currentTime) {
+                console.error('Вы не можете записаться на прошедшее время.');
+                return;
+            }
+
             const response = await fetch('http://localhost:8080/api/admissions/create', {
                 method: 'POST',
                 headers: {
@@ -148,16 +175,14 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
 
 
             console.log('Admission created successfully!');
-            setTimeout(() => {
-                router.back(); // Вернуться назад через некоторое время
-            }, 3000);
-            // Обработка успешного создания записи на прием
+            if (response.ok) {
+                setSuccessMessage('Запись прошла успешно!');
+                setShowSuccessMessage(true);
+            }
 
-            // Можно также обновить интерфейс или перенаправить пользователя на другую страницу
+
         } catch (error) {
             console.error('Error:', error);
-            // Обработка ошибки при создании записи на прием
-            // Можно вывести сообщение об ошибке или предложить повторить запрос
         }
     };
 
@@ -170,7 +195,7 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                     <p>Врач: {`${doctor.lastName} ${doctor.firstName}`}</p>
                     <p>Кабинет: №{doctor.office}</p>
                     <p>Должность: {doctor.position}</p>
-                    <p>Специализация: {doctor.specialty.name}</p>
+                    <p>Специализация: {specialty}</p>
                 </div>
                 <div>
                     <label className={styles.label_card}>Дата:</label>
@@ -180,6 +205,7 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                         onChange={handleDateChange}
                         minDate={Today}
                         maxDate={nextWeek}
+
                     />
                 </div>
 
@@ -187,10 +213,14 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                     <label className={styles.label_card}>Время:</label>
                     <Select className={styles.sel} options={timeOptions} onChange={handleTimeChange} />
                 </div>
-                {successMessage && (
+
+
+                <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
+                    Записаться
+                </Button>
+                {showSuccessMessage && (
                     <div className={styles.successMessage}>{successMessage}</div>
                 )}
-                <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>Записаться</Button>
             </div>
         </div>
     );

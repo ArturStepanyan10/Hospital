@@ -39,3 +39,23 @@
     transform: rotate(90deg);
     transition: all 0.2s;
 }
+
+.delete {
+    color: var(--white);
+    background-color: rgb(163, 44, 44);
+}
+
+.delete:hover {
+    color: var(--white);
+    background-color: rgb(100, 29, 29);
+}
+
+.create {
+    color: var(--white);
+    background-color: rgb(28, 121, 28);
+}
+
+.create:hover {
+    color: var(--white);
+    background-color: rgb(19, 85, 19);
+}

@@ -8,7 +8,9 @@ export const Button = ({ appearance, arrow = 'none', children, className, ...pro
         <button
             className={cn(styles.button, className, {
                 [styles.primary]: appearance == 'primary',
-                [styles.ghost]: appearance == 'ghost'
+                [styles.ghost]: appearance == 'ghost',
+                [styles.delete]: appearance == 'delete',
+                [styles.create]: appearance == 'create',
             })}
             {...props}
         >

@@ -13,7 +13,22 @@ interface CredentialsRegister {
     snils: string;
 }
 
-export function postFetch(endpoint: URL | RequestInfo, bodyObj: CredentialsSignIn | CredentialsRegister) {
+interface CredentialsRegisterDoctor {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    specialtyId: number;
+    position: string;
+    office: string;
+    work_experience: number;
+
+}
+
+
+
+export function postFetch(endpoint: URL | RequestInfo, bodyObj: CredentialsSignIn | CredentialsRegister |
+    CredentialsRegisterDoctor) {
     return fetch(endpoint, {
         method: "POST",
         headers: {

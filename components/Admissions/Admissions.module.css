@@ -46,3 +46,12 @@
     border-radius: 20px;
     font-size: 16px;
 }
+
+.successMessage {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+}

@@ -53,3 +53,9 @@
 .scheduleTable tbody tr:hover {
     background-color: #ddd;
 }
+
+.info {
+    background-color: var(--bg-blue);
+    padding: 10px;
+    border-radius: 10px;
+}

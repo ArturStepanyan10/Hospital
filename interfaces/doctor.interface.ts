@@ -7,7 +7,7 @@ export interface Doctor {
     user: Users;
     firstName: string;
     lastName: string;
-    specialty: Specialty;
+    specialtyId: number;
     position: string;
     office: string;
     work_experience: number;

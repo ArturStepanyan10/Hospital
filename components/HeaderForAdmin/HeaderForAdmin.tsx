@@ -8,53 +8,60 @@ import LoginIcon from './LoginIcon.svg';
 import LogoutIcon from './LogoutIcon.svg';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import React from 'react';
 import { eraseCookie, getCookie } from '../../utils/setCookie';
 import { decodeJWTToken } from '../../utils/decodeJWT';
-
+import { useRouter } from 'next/navigation';
 
 
 export const HeaderForAdmin = ({ className, ...props }: HeaderProps): JSX.Element => {
-    const [isLogin, setIsLogin] = useState(!!getCookie("accessToken"));
+    const [isLogin, setIsLogin] = useState(false);
     const router = useRouter();
-    const [userLastName, setUserLastName] = useState<string>("");
+    const [userLastName, setUserLastName] = useState("");
+
 
     useEffect(() => {
-        setIsLogin(!!getCookie("accessToken"));
+        if (typeof window !== 'undefined') {
+            setIsLogin(!!getCookie("accessToken"));
+
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [getCookie("accessToken")]);
+    }, [!!getCookie("accessToken")]);
 
     useEffect(() => {
-        const token = getCookie("accessToken");
-        if (token) {
-            const decodedToken = decodeJWTToken(token);
-            setUserLastName(decodedToken.lastName);
+        if (typeof window !== 'undefined') {
+            const token = getCookie("accessToken");
+            if (token) {
+                const decodedToken = decodeJWTToken(token);
+                setUserLastName(decodedToken.lastName);
+            }
         }
     }, []);
 
-    function logout(e: MouseEvent) {
+    function logout(e: React.MouseEvent) {
         e.preventDefault();
-        eraseCookie("accessToken");
-        console.log("Выход из аккауната успешно совершен!");
-        router.refresh();
+        const confirmed = window.confirm("Точно ли хотите выйти ?");
+        if (confirmed) {
+            eraseCookie("accessToken");
+            console.log("Выход из аккаунта успешно выполнен!");
+            if (typeof window !== 'undefined') {
+                router.push('/adminSide');
+                setIsLogin(false);
+            }
+        }
     }
 
     return (
         <header className={cn(className, styles.header)} {...props}>
             <div className={styles.navbar}>
                 <Link href='/adminSide'><LogoIcon className={styles.logo} /></Link>
-                <ul className={styles.ul}>
-                    <Link href='/'><li>Врачи</li></Link>
-                    <Link href='/'><li>Расписание</li></Link>
-                </ul>
                 {!isLogin && (
-                    <Link href="../sign-in/"><LoginIcon className={styles.login} placeholder="Войти" /> </Link>
+                    <Link href="../sign-in/"><LoginIcon className={styles.login} /> </Link>
                 )}
                 {isLogin && (
                     <div>
-                        <Link href="/">
-                            <LogoutIcon className={styles.logout} onClick={logout} placeholder="Выход" />
+                        <Link href="/adminSide">
+                            <LogoutIcon className={styles.logout} onClick={logout} />
                         </Link>
                         <div>{userLastName}</div>
                     </div>
@@ -63,4 +70,3 @@ export const HeaderForAdmin = ({ className, ...props }: HeaderProps): JSX.Elemen
         </header>
     );
 };
-

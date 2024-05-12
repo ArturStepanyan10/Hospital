@@ -9,6 +9,10 @@ export function setCookie(name: string, value: string, hours: number): void {
 }
 
 export function getCookie(name: string): string | null {
+
+    if (typeof document === 'undefined') {
+        return null; // Возвращаем null, если document не определен
+    }
     let nameEQ: string = name + "=";
     let ca: string[] = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
@@ -20,5 +24,8 @@ export function getCookie(name: string): string | null {
 }
 
 export function eraseCookie(name: string): void {
+
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
 }
+

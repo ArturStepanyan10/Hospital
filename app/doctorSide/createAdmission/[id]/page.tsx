@@ -9,7 +9,6 @@ import { MedicalReport } from '../../../../interfaces/medicalReport.interface';
 import { Button } from '../../../../components';
 import { Patient } from '../../../../interfaces/patient.interface';
 import { Admission } from '../../../../interfaces/admission.interface';
-import { fi } from 'date-fns/locale';
 
 
 const CreateAdmission = ({ params }: { params: { id: number } }) => {
@@ -97,14 +96,12 @@ const CreateAdmission = ({ params }: { params: { id: number } }) => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            // Обработка успешного создания записи на прием
             console.log('Admission created successfully!');
             console.log(decodedToken.id);
-            // Можно также обновить интерфейс или перенаправить пользователя на другую страницу
+
         } catch (error) {
             console.error('Error:', error);
-            // Обработка ошибки при создании записи на прием
-            // Можно вывести сообщение об ошибке или предложить повторить запрос
+
         }
     };
 
