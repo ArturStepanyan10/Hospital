@@ -43,8 +43,7 @@ export const MedicalCard = () => {
 
     useEffect(() => {
         const fetchAdmissionsByPatient = async () => {
-            if (!patient) return; // Проверяем наличие пациента перед запросом
-
+            if (!patient) return;
             try {
                 const response = await fetch(`http://localhost:8080/api/admissions/searchByPatient/${patient.id}`);
 
@@ -64,17 +63,18 @@ export const MedicalCard = () => {
 
     useEffect(() => {
         const fetchMedReportByPatient = async () => {
-            if (!patient) return; // Проверяем наличие пациента перед запросом
+            if (!patient) return;
 
             try {
-                const response = await fetch(`http://localhost:8080/api/api/medical-reports/searchByPatient/${patient.id}`);
+                const response = await fetch(`http://localhost:8080/api/medical-reports/searchByPatient/${patient.id}`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
                 const medReportData = await response.json();
-                setAdmissions(medReportData);
+
+                setMedReport(medReportData);
             } catch (error) {
                 console.error('Error fetching admissions:', error);
             }
@@ -136,8 +136,14 @@ export const MedicalCard = () => {
                                     <p className={styles.doctorInfo}>Доктор: {doctor.find(d => d.id === admission.doctorId)?.lastName} {doctor.find(d => d.id === admission.doctorId)?.firstName}</p>
                                 )}
                                 <p>Дата и время: {new Date(admission.date).toLocaleDateString()} {admission.time.toString()}</p>
-                                <p>Жалобы/Заключение: Таблетки кагоцел 3 раза в день по 1 штуке, спрей в нос, в день минимум 2.5л воды</p>
+
+                                {medReport.find(r => r.admissionId === admission.id) && (
+                                    <p>Результаты приема: {medReport.find(r => r.admissionId === admission.id)?.report}</p>)}
+
                             </div>
+
+
+
                         )}
                     </div>
                 ))}

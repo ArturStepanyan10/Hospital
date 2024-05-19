@@ -12,7 +12,9 @@ import { Patient } from '../../interfaces/patient.interface';
 import { getCookie } from '../../utils/setCookie';
 import { decodeJWTToken } from '../../utils/decodeJWT';
 import { useRouter } from 'next/navigation';
-import { Specialty } from '../../interfaces/specialization.interface';
+import { format, set } from 'date-fns';
+import { Schedule } from '../../interfaces/schedules.interface';
+import { Scheds } from '../../interfaces/scheds.interface';
 
 
 interface IdProps {
@@ -27,10 +29,20 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const [schedDate, setSchedDate] = useState<string | number | null>(null);
+    const [schedules, setSchedules] = useState<Schedule>();
+    const [timeStart, setStartTime] = useState<string | number | null>(null);
+    const [timeEnd, setEndTime] = useState<string | number | null>(null);
+    const [scheds, setScheds] = useState<Scheds[]>([]);
+
+
 
     const router = useRouter();
 
     const Today = new Date();
+    const formattedDate = format(Today, 'yyyy-MM-dd');
+
     const nextWeek = new Date();
     const currentTime = new Date();
     nextWeek.setDate(Today.getDate() + 7);
@@ -84,6 +96,54 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
     }, [id]);
 
     useEffect(() => {
+        const fetchScheduleByDate = async () => {
+            try {
+                const fetchDataSchedule = await fetch(`http://localhost:8080/api/schedule/doctorForPatient/${id}?date=${formattedDate}`)
+
+                if (!fetchDataSchedule.ok) {
+                    throw new Error(`HTTP error! Status: ${fetchDataSchedule.status}`);
+                }
+
+                const scheduleData = await fetchDataSchedule.json();
+                setSchedules(scheduleData);
+
+                if (scheduleData) {
+                    const scheduleDate = scheduleData.scheduleDate;
+                    const startTimeHour = scheduleData.startTime.split(':')[0];
+                    const endTimeHour = scheduleData.endTime.split(':')[0];
+                    setSchedDate(scheduleDate);
+                    setStartTime(startTimeHour);
+                    setEndTime(endTimeHour);
+                }
+            } catch (error) {
+                console.error('Error fetching schedule:', error);
+            }
+        };
+        if (id) {
+            fetchScheduleByDate();
+        }
+    }, [id, formattedDate])
+
+    useEffect(() => {
+        const fetchScheduleByDateDoctor = async () => {
+            try {
+                const fetchDataSchedule = await fetch(`http://localhost:8080/api/schedule/generate/doctor/${id}?date=${formattedDate}`)
+
+                if (!fetchDataSchedule.ok) {
+                    throw new Error(`HTTP error! Status: ${fetchDataSchedule.status}`);
+                }
+
+                const scheduleData = await fetchDataSchedule.json();
+                setScheds(scheduleData);
+            } catch (error) {
+                console.error('Error fetching schedule:', error);
+            }
+        };
+        fetchScheduleByDateDoctor();
+
+    }, [id, formattedDate]);
+
+    useEffect(() => {
         const fetchSpecialty = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/api/specialty/${doctor?.specialtyId}`);
@@ -114,16 +174,31 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
     };
 
     const generateTimeOptions = () => {
-        const startTime = 8;
-        const endTime = 19;
+        let startTime: number;
+        let endTime: number;
+
+        const formattedSelectedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
+
+        if (schedDate === formattedSelectedDate) {
+            startTime = Number(timeStart);
+            endTime = Number(timeEnd);
+        } else {
+            startTime = 8;
+            endTime = 19;
+        }
+
         const interval = 30;
         const timeOptions = [];
 
+
+
         for (let hour = startTime; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += interval) {
-                const formattedHour = hour.toString().padStart(2, '0'); // Преобразование часов в двузначное число
-                const formattedMinute = minute === 0 ? '00' : minute.toString(); // Преобразование минут в двузначное число
+                const formattedHour = hour.toString().padStart(2, '0');
+                const formattedMinute = minute === 0 ? '00' : minute.toString();
                 const time = `${formattedHour}:${formattedMinute}`;
+
+
                 timeOptions.push({ label: time, value: time });
 
             }
@@ -151,9 +226,12 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
 
             const selectedDateTime = selectedDate ? new Date(selectedDate.setHours(parseInt(selectedTime!.split(":")[0]), parseInt(selectedTime!.split(":")[1]))) : null;
             if (selectedDateTime && selectedDateTime <= currentTime) {
-                console.error('Вы не можете записаться на прошедшее время.');
+                console.error('Ошибка.');
+                setSuccessMessage('Вы не можете записаться на прошедшее время.');
+                setShowErrorMessage(true);
                 return;
             }
+
 
             const response = await fetch('http://localhost:8080/api/admissions/create', {
                 method: 'POST',
@@ -169,15 +247,17 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+
 
 
             console.log('Admission created successfully!');
             if (response.ok) {
                 setSuccessMessage('Запись прошла успешно!');
                 setShowSuccessMessage(true);
+            } else {
+                setSuccessMessage('На это время у врача уже есть запись.');
+                setShowErrorMessage(true);
+
             }
 
 
@@ -188,50 +268,43 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
 
     const timeOptions = generateTimeOptions();
     return (
-        <div className={styles.container}>
-            <div className={styles.card}>
-                <div className={styles.info_doc}>
-                    <h1 className={styles.card_H1}>Запись на прием</h1>
-                    <p>Врач: {`${doctor.lastName} ${doctor.firstName}`}</p>
-                    <p>Кабинет: №{doctor.office}</p>
-                    <p>Должность: {doctor.position}</p>
-                    <p>Специализация: {specialty}</p>
+        <>
+            <button className={styles.return} onClick={() => router.back()}>Назад</button>
+            <div className={styles.container}>
+                <div className={styles.card}>
+                    <div className={styles.info_doc}>
+                        <h1 className={styles.card_H1}>Запись на прием</h1>
+                        <p>Врач: {`${doctor.lastName} ${doctor.firstName}`}</p>
+                        <p>Кабинет: №{doctor.office}</p>
+                        <p>Должность: {doctor.position}</p>
+                        <p>Специализация: {specialty}</p>
+                    </div>
+                    <div>
+                        <label className={styles.label_card}>Дата:</label>
+                        <DatePicker
+                            className={styles.datePicker}
+                            selected={selectedDate}
+                            onChange={handleDateChange}
+                            minDate={Today}
+                            maxDate={nextWeek} />
+                    </div>
+
+                    <div>
+                        <label className={styles.label_card}>Время:</label>
+                        <Select className={styles.sel} options={timeOptions} onChange={handleTimeChange} />
+                    </div>
+
+
+                    <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
+                        Записаться
+                    </Button>
+                    {showSuccessMessage && (
+                        <div className={styles.successMessage}>{successMessage}</div>
+                    )}
+                    {showErrorMessage && (
+                        <div className={styles.errorMessage}>{successMessage}</div>
+                    )}
                 </div>
-                <div>
-                    <label className={styles.label_card}>Дата:</label>
-                    <DatePicker
-                        className={styles.datePicker}
-                        selected={selectedDate}
-                        onChange={handleDateChange}
-                        minDate={Today}
-                        maxDate={nextWeek}
-
-                    />
-                </div>
-
-                <div>
-                    <label className={styles.label_card}>Время:</label>
-                    <Select className={styles.sel} options={timeOptions} onChange={handleTimeChange} />
-                </div>
-
-
-                <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
-                    Записаться
-                </Button>
-                {showSuccessMessage && (
-                    <div className={styles.successMessage}>{successMessage}</div>
-                )}
-            </div>
-        </div>
+            </div></>
     );
 };
-
-
-
-
-
-
-
-
-
-

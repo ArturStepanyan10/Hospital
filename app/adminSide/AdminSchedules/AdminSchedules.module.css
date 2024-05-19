@@ -1,6 +1,6 @@
 .formContainer {
     max-width: 400px;
-    height: 650px;
+    height: 600px;
     margin: 20px auto;
     padding: 20px;
     border: 2px solid #00CADE;
@@ -72,20 +72,50 @@
 }
 
 .up {
-    color: #00CADE;
+    color: #1e4f53;
     text-align: center;
 
 }
 
 .up:hover {
-    color: #055057;
+    color: #04272b;
+    text-decoration: underline;
 }
 
-.del {
-    color: rgb(163, 44, 44);
+.successMessage {
+    background-color: #4CAF50;
+    color: white;
     text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
 }
 
-.del:hover {
-    color: rgb(92, 26, 26);
+.errorMessage {
+    background-color: #a52312;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.return {
+    margin-top: 20px;
+    width: 120px;
+    border-radius: 20px;
+    font-size: 16px;
+    height: 40px;
+    color: white;
+    background-color: #00CADE;
+    border: white;
+    cursor: pointer;
+}
+
+.return:hover {
+    transform: scale(0.95);
+    background-color: #11656d;
+    font-weight: 600;
 }

@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import styles from './EditService.module.css'
+import { useRouter } from 'next/navigation';
 
 
 const EditServices = ({ params }: { params: { id: number } }) => {
     const [serviceData, setServiceData] = useState<any>({});
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchServiceData = async () => {
@@ -53,19 +57,22 @@ const EditServices = ({ params }: { params: { id: number } }) => {
                 throw new Error('Failed to update service data');
             }
 
-            setSuccessMessage('Изменения успешно сохранены');
-            setTimeout(() => {
-                setSuccessMessage('');
-            }, 3000);
             console.log('Successfully');
+            setSuccessMessage('Данные успешно обновлены');
+            setShowSuccessMessage(true);
+
         } catch (error) {
             console.error('Error updating service data:', error);
+            setSuccessMessage('Произошла ошибка при обновлении данных');
+            setShowErrorMessage(true);
         }
     };
 
     return (
         <div>
-
+            <button className={styles.return} onClick={() => router.back()}>
+                Назад
+            </button>
 
             <form className={styles.formContainer} onSubmit={handleSubmit}>
                 <h1>Редактирование сервиса #{params.id}</h1>
@@ -82,8 +89,11 @@ const EditServices = ({ params }: { params: { id: number } }) => {
                     <input type="text" name="description" value={serviceData.description || ''} onChange={handleInputChange} />
                 </label><br />
                 <button type="submit">Сохранить изменения</button>
-                {successMessage && (
+                {showSuccessMessage && (
                     <div className={styles.successMessage}>{successMessage}</div>
+                )}
+                {showErrorMessage && (
+                    <div className={styles.errorMessage}>{successMessage}</div>
                 )}
             </form>
         </div>

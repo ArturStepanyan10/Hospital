@@ -6,11 +6,13 @@ import styles from './dataPatient.module.css';
 import { Admission } from '../../../../interfaces/admission.interface';
 import { getCookie } from '../../../../utils/setCookie';
 import { decodeJWTToken } from '../../../../utils/decodeJWT';
+import { MedicalReport } from '../../../../interfaces/medicalReport.interface';
 
 const DataPatient = ({ params }: { params: { id: number } }) => {
     const [patient, setPatient] = useState<Patient>();
     const [admissions, setAdmissions] = useState<Admission[]>([]);
     const [doctorId, setDoctorId] = useState<number | null>(null);
+    const [medreport, setMedReport] = useState<MedicalReport[]>([]);
 
     useEffect(() => {
         const fetchPatient = async () => {
@@ -28,7 +30,6 @@ const DataPatient = ({ params }: { params: { id: number } }) => {
                 const patientData = await response.json();
                 setPatient(patientData);
 
-                // Получаем ID врача из токена и обновляем состояние
                 const doctorId = decodedToken.id;
                 setDoctorId(doctorId);
             } catch (error) {
@@ -41,7 +42,7 @@ const DataPatient = ({ params }: { params: { id: number } }) => {
 
     useEffect(() => {
         const fetchAdmissionsByPatient = async () => {
-            if (!patient || !doctorId) return; // Проверяем наличие пациента и ID врача перед запросом
+            if (!patient || !doctorId) return;
 
             try {
                 const response = await fetch(`http://localhost:8080/api/admissions/searchByPatient/${patient.id}`);
@@ -51,7 +52,7 @@ const DataPatient = ({ params }: { params: { id: number } }) => {
                 }
 
                 const admissionsData = await response.json();
-                // Фильтруем приемы по ID врача
+
                 const filteredAdmissions = admissionsData.filter((admission: { doctorId: number; }) => admission.doctorId === doctorId);
                 setAdmissions(filteredAdmissions);
             } catch (error) {
@@ -60,6 +61,29 @@ const DataPatient = ({ params }: { params: { id: number } }) => {
         };
 
         fetchAdmissionsByPatient();
+    }, [patient, doctorId]);
+
+    useEffect(() => {
+        const fetchReportByPatient = async () => {
+            if (!patient || !doctorId) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/medical-reports/searchByPatient/${patient.id}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const admissionsData = await response.json();
+
+                const filteredAdmissions = admissionsData.filter((admission: { doctorId: number; }) => admission.doctorId === doctorId);
+                setMedReport(filteredAdmissions);
+            } catch (error) {
+                console.error('Error fetching admissions:', error);
+            }
+        };
+
+        fetchReportByPatient();
     }, [patient, doctorId]);
 
 
@@ -100,7 +124,12 @@ const DataPatient = ({ params }: { params: { id: number } }) => {
                             {isPastAppointment(admission.date) && (
                                 <div>
                                     <p>Дата и время: {new Date(admission.date).toLocaleDateString()} {admission.time.toString()}</p>
-                                    <p>Жалобы/Заключение: </p>
+                                    {medreport.map(report => (
+                                        <div key={report.id}>
+                                            <p>Жалобы/Заключение: {report.report}</p>
+                                        </div>
+                                    ))}
+
                                 </div>
                             )}
                         </div>

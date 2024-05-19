@@ -7,11 +7,13 @@ import { getSpecializations } from '../../api';
 import styles from './AdminSpeciality.module.css'
 import Link from 'next/link';
 import { Button } from '../../../components';
+import { useRouter } from 'next/navigation';
 
 
 const AdminSpeciality = () => {
     const [specialitys, setSpecialitys] = useState<Specialty[]>([]);
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const router = useRouter();
 
     useEffect(() => {
         const fetchSpecialty = async () => {
@@ -27,6 +29,11 @@ const AdminSpeciality = () => {
     }, []);
 
     const handleDeleteSpeciality = async (id: number) => {
+        const confirmed = window.confirm('Вы уверены, что хотите удалить эт специальность?');
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:8080/api/specialty/delete/${id}`, {
                 method: 'DELETE',
@@ -34,10 +41,7 @@ const AdminSpeciality = () => {
             if (!response.ok) {
                 throw new Error('Failed to delete speciality');
             }
-            setSuccessMessage('Специальность успешно удален');
-            setTimeout(() => {
-                setSuccessMessage('');
-            }, 3000); // Скрыть сообщение через 3 секунды
+
             const updatedSpecialty = specialitys.filter(speciality => speciality.id !== id);
             setSpecialitys(updatedSpecialty);
         } catch (error) {
@@ -48,6 +52,9 @@ const AdminSpeciality = () => {
     return (
         <>
             <div className={styles.headerContainer}>
+                <button className={styles.return} onClick={() => router.back()}>
+                    Назад
+                </button>
                 <h1>Специальности</h1>
                 <Link href='/adminSide/AdminSpeciality/CreateSpeciality'>
                     <Button className={styles.create} appearance='create'>
@@ -59,7 +66,7 @@ const AdminSpeciality = () => {
             {specialitys.map((speciality) => {
                 return (
                     <div className={styles.cardContainer} key={speciality.id}>
-                        <h2>{speciality.name}</h2>
+                        <h2>{speciality.id} - {speciality.name}</h2>
 
                         <Button
                             className={styles.buttonForDel}

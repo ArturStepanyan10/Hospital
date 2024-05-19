@@ -10,6 +10,7 @@
     align-items: center;
     justify-content: center;
     background: white;
+
 }
 
 .formContainer h1 {
@@ -67,4 +68,42 @@
 .formContainer p {
     text-align: center;
     color: rgb(221, 90, 90);
+}
+
+.successMessage {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.errorMessage {
+    background-color: #a52312;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.return {
+    margin-top: 20px;
+    width: 120px;
+    border-radius: 20px;
+    font-size: 16px;
+    height: 40px;
+    color: white;
+    background-color: #00CADE;
+    border: white;
+    cursor: pointer;
+}
+
+.return:hover {
+    transform: scale(0.95);
+    background-color: #11656d;
+    font-weight: 600;
 }

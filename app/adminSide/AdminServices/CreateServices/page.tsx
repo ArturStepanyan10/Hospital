@@ -6,14 +6,9 @@ import { Button, Input } from '../../../../components';
 import Link from 'next/link';
 
 const CreateServices = () => {
-    const [id, setId] = useState<number>();
     const [name, setName] = useState<string>("");
     const [price, setPrice] = useState<number>();
     const [description, setDescription] = useState<string>("");
-
-    function handledIdSetServiceChange(e: ChangeEvent<HTMLInputElement>) {
-        setId(parseInt(e.target.value));
-    }
 
     function handledNameChange(e: ChangeEvent<HTMLInputElement>) {
         setName(e.target.value);
@@ -38,7 +33,6 @@ const CreateServices = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id: id,
                     name: name,
                     price: price,
                     description: description
@@ -62,12 +56,6 @@ const CreateServices = () => {
         <div className={styles.formContainer}>
             <h1>Создание расписания</h1>
             <form >
-                <Input
-                    onChange={handledIdSetServiceChange}
-                    type="text"
-                    placeholder="Услуга (id)"
-                    value={id !== undefined ? id.toString() : ''}
-                /> <br />
                 <Input
                     onChange={handledNameChange}
                     type="text"

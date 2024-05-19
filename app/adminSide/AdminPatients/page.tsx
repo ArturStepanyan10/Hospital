@@ -6,11 +6,13 @@ import styles from './AdminPatients.module.css'
 import Link from 'next/link';
 import { getPatientsData } from '../../api';
 import { Button } from '../../../components';
+import { useRouter } from 'next/navigation';
 
 
 const AdminPatients = () => {
     const [patients, setPatients] = useState<Patient[]>([]);
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const router = useRouter();
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -27,6 +29,11 @@ const AdminPatients = () => {
     }, []);
 
     const handleDeletePatient = async (id: number) => {
+        const confirmed = window.confirm('Вы уверены, что хотите удалить этого пациента?');
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:8080/api/patient/delete/${id}`, {
                 method: 'DELETE',
@@ -34,10 +41,7 @@ const AdminPatients = () => {
             if (!response.ok) {
                 throw new Error('Failed to delete patient');
             }
-            setSuccessMessage('Пациент успешно удален');
-            setTimeout(() => {
-                setSuccessMessage('');
-            }, 3000); // Скрыть сообщение через 3 секунды
+
             const updatedPatients = patients.filter(patient => patient.id !== id);
             setPatients(updatedPatients);
         } catch (error) {
@@ -48,7 +52,11 @@ const AdminPatients = () => {
 
     return (
         <>
+
             <div className={styles.headerContainer}>
+                <button className={styles.return} onClick={() => router.back()}>
+                    Назад
+                </button>
                 <h1>Пациенты</h1>
             </div>
 

@@ -32,8 +32,9 @@ export const HeaderForAdmin = ({ className, ...props }: HeaderProps): JSX.Elemen
         if (typeof window !== 'undefined') {
             const token = getCookie("accessToken");
             if (token) {
-                const decodedToken = decodeJWTToken(token);
-                setUserLastName(decodedToken.lastName);
+                //const decodedToken = decodeJWTToken(token);
+                //console.log(decodedToken);
+                //setUserLastName(decodedToken.lastName);
             }
         }
     }, []);

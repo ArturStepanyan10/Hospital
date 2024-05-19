@@ -7,10 +7,12 @@ import styles from './AdminDoctors.module.css';
 import { Specialty } from '../../../interfaces/specialization.interface';
 import Link from 'next/link';
 import { Button } from '../../../components';
+import { useRouter } from 'next/navigation';
 
 const AdminDoctors = () => {
     const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [specialty, setSpecialty] = useState<Specialty[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchDoctors = async () => {
@@ -40,6 +42,11 @@ const AdminDoctors = () => {
     }, []);
 
     const handleDeleteDoctor = async (id: number) => {
+        const confirmed = window.confirm('Вы уверены, что хотите удалить этого врача?');
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:8080/api/doctor/delete/${id}`, {
                 method: 'DELETE',
@@ -47,8 +54,8 @@ const AdminDoctors = () => {
             if (!response.ok) {
                 throw new Error('Failed to delete doctor');
             }
-            console.log('successfully')
-            // Добавьте код для редиректа пользователя на другую страницу или отображения сообщения об успешном удалении
+            console.log('Successfully deleted doctor');
+            setDoctors(doctors.filter(doctor => doctor.id !== id));
         } catch (error) {
             console.error('Error deleting doctor:', error);
         }
@@ -57,6 +64,7 @@ const AdminDoctors = () => {
     return (
         <>
             <div className={styles.headerContainer}>
+                <button className={styles.return} onClick={() => router.back()}>Назад</button>
                 <h1>Врачи</h1>
                 <Link href='/adminSide/AdminDoctors/CreateDoctor'>
                     <Button className={styles.create} appearance='create'>Добавить врача</Button>

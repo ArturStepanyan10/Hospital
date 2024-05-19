@@ -1,6 +1,6 @@
 .formContainer {
     max-width: 400px;
-    height: 450px;
+    height: 650px;
     margin: 20px auto;
     padding: 20px;
     border: 2px solid #00CADE;
@@ -18,17 +18,17 @@
 }
 
 .formContainer input[type="text"] {
-    margin-bottom: 10px;
     padding: 10px;
     border: 2px solid #ccc;
     width: 360px;
+    border-radius: 15px;
 }
 
 .formContainer button {
     background-color: #3BBCE3;
     color: #fff;
     cursor: pointer;
-    margin-top: 25px;
+    margin-top: 10px;
     padding: 13px;
     border-radius: 20px;
     width: 100%;
@@ -50,14 +50,40 @@
     padding-bottom: 14px;
 }
 
-.label_card {
-    display: block;
-    margin-bottom: 6px;
+.successMessage {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
 }
 
-.button {
+.errorMessage {
+    background-color: #a52312;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.return {
     margin-top: 20px;
-    width: 30%;
+    width: 120px;
     border-radius: 20px;
     font-size: 16px;
+    height: 40px;
+    color: white;
+    background-color: #00CADE;
+    border: white;
+    cursor: pointer;
+}
+
+.return:hover {
+    transform: scale(0.95);
+    background-color: #11656d;
+    font-weight: 600;
 }

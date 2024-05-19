@@ -12,6 +12,8 @@ import { Button } from '../../components';
 const DoctorPage = () => {
     const [patients, setPatients] = useState<Patient[]>([]);
     const [admissions, setAdmissions] = useState<Admission[]>([]);
+    const isUserLoggedIn = !!getCookie("accessToken");
+    console.log(isUserLoggedIn);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -62,13 +64,20 @@ const DoctorPage = () => {
                         <p className={styles.patientText}>Возраст: {patient.age}</p>
                         <p className={styles.patientText}>СНИЛС: {patient.snils}</p>
                         <p className={styles.patientText}>Номер телефона: {patient.phoneNumber}</p>
-                        <Link href={`doctorSide/dataPatient/${patient.id}`}>
+                        {isUserLoggedIn ? (<Link href={`doctorSide/dataPatient/${patient.id}`}>
                             <Button className={styles.button} appearance='primary'>
                                 Полные данные
-                            </Button></Link>
-                        <Link href={`doctorSide/createAdmission/${patient.id}`}><Button className={styles.admission} appearance='primary'>
+                            </Button></Link>) : (
+                            <Link href='../sign-in/'>
+                                <Button className={styles.button} appearance='primary'>
+                                    Полные данные
+                                </Button></Link>
+                        )}
+                        {isUserLoggedIn ? (<Link href={`doctorSide/createAdmission/${patient.id}`}><Button className={styles.admission} appearance='primary'>
                             Провести прием
-                        </Button></Link>
+                        </Button></Link>) : (<Link href='../sign-in'><Button className={styles.admission} appearance='primary'>
+                            Провести прием
+                        </Button></Link>)}
                     </div>
                 ))}
             </div>

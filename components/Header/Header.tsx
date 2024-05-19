@@ -44,8 +44,8 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
         if (typeof window !== 'undefined') {
             const token = getCookie("accessToken");
             if (token) {
-                const decodedToken = decodeJWTToken(token);
-                setUserLastName(decodedToken.lastName);
+                //const decodedToken = decodeJWTToken(token);
+                //setUserLastName(decodedToken.lastName);
             }
         }
     }, []);
@@ -57,7 +57,8 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
             eraseCookie("accessToken");
             console.log("Выход из аккаунта успешно выполнен!");
             if (typeof window !== 'undefined') {
-                router.refresh();
+                router.push('/');
+                setIsLogin(false);
             }
         }
     }

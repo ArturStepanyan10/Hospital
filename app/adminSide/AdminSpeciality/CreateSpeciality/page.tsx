@@ -3,15 +3,14 @@
 import { ChangeEvent, useState } from 'react';
 import styles from './CreateSpecialty.module.css'
 import { Button, Input } from '../../../../components';
+import { useRouter } from 'next/navigation';
 
 const CreateSpeciality = () => {
-    const [id, setId] = useState<number>();
     const [name, setName] = useState<string>("");
-
-
-    function handledIdSetSpecialityChange(e: ChangeEvent<HTMLInputElement>) {
-        setId(parseInt(e.target.value));
-    }
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const router = useRouter();
 
     function handledNameChange(e: ChangeEvent<HTMLInputElement>) {
         setName(e.target.value);
@@ -26,7 +25,6 @@ const CreateSpeciality = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id: id,
                     name: name,
                 }),
             });
@@ -35,37 +33,43 @@ const CreateSpeciality = () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             console.log('Success!');
+            setSuccessMessage('Специльность добавлена')
+            setShowSuccessMessage(true);
+
 
 
         } catch (error) {
             console.error('Error:', error);
+            setSuccessMessage('Произошла ошибка при обновлении данных');
+            setShowErrorMessage(true);
 
         }
     };
 
     return (
+        <><button className={styles.return} onClick={() => router.back()}>
+            Назад
+        </button><div className={styles.formContainer}>
 
-        <div className={styles.formContainer}>
-            <h1>Создание специальности</h1>
-            <form >
-                <Input
-                    onChange={handledIdSetSpecialityChange}
-                    type="text"
-                    placeholder="Специальность (id)"
-                    value={id !== undefined ? id.toString() : ''}
-                /> <br />
-                <Input
-                    onChange={handledNameChange}
-                    type="text"
-                    placeholder="Название специальности"
-                    value={name}
-                /> <br />
+                <h1>Создание специальности</h1>
+                <form>
+                    <Input
+                        onChange={handledNameChange}
+                        type="text"
+                        placeholder="Название специальности"
+                        value={name} /> <br />
 
-                <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
-                    Создать услугу
-                </Button>
-            </form>
-        </div>
+                    <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
+                        Создать услугу
+                    </Button>
+                    {showSuccessMessage && (
+                        <div className={styles.successMessage}>{successMessage}</div>
+                    )}
+                    {showErrorMessage && (
+                        <div className={styles.errorMessage}>{successMessage}</div>
+                    )}
+                </form>
+            </div></>
 
     )
 }

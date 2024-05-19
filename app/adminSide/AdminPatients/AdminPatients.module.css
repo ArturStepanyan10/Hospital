@@ -27,3 +27,21 @@
     display: flex;
     align-items: center;
 }
+
+.return {
+    width: 120px;
+    border-radius: 20px;
+    font-size: 16px;
+    height: 40px;
+    color: white;
+    background-color: #00CADE;
+    border: white;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.return:hover {
+    transform: scale(0.95);
+    background-color: #11656d;
+    font-weight: 600;
+}

@@ -9,21 +9,31 @@ import { MedicalReport } from '../../../../interfaces/medicalReport.interface';
 import { Button } from '../../../../components';
 import { Patient } from '../../../../interfaces/patient.interface';
 import { Admission } from '../../../../interfaces/admission.interface';
+import { Scheds } from '../../../../interfaces/scheds.interface';
+import { format } from 'date-fns';
+import { cp } from 'fs';
 
 
 const CreateAdmission = ({ params }: { params: { id: number } }) => {
     const [medReport, setMedReport] = useState<MedicalReport>();
     const [patient, setPatient] = useState<Patient>();
-    const [admission, setAdmission] = useState<Admission[]>([]);
+    const [scheds, setScheds] = useState<Scheds[]>([]);
     const [doctorId, setDoctorId] = useState<number | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const [admissionId, setAdmissionId] = useState<number | null>(null);
+    const [admissions, setAdmissions] = useState<Admission[]>([]);
 
+    const Today = new Date();
+    const formattedDate = format(Today, 'yyyy-MM-dd');
 
     useEffect(() => {
         const fetchPatient = async () => {
             if (!params.id) return;
 
             try {
-
                 const response = await fetch(`http://localhost:8080/api/patient/search/${params.id}`);
 
                 if (!response.ok) {
@@ -31,9 +41,7 @@ const CreateAdmission = ({ params }: { params: { id: number } }) => {
                 }
 
                 const patientData = await response.json();
-
                 setPatient(patientData);
-
             } catch (error) {
                 console.error('Error fetching patient:', error);
             }
@@ -42,35 +50,6 @@ const CreateAdmission = ({ params }: { params: { id: number } }) => {
         fetchPatient();
     }, [params.id]);
 
-
-    useEffect(() => {
-        const fetchAdmissionsByPatient = async () => {
-            if (!patient || !doctorId) return; // Проверяем наличие пациента и ID врача перед запросом
-
-            try {
-                const response = await fetch(`http://localhost:8080/api/admissions/searchByPatient/${patient?.id}`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const admissionsData = await response.json();
-
-                // Фильтруем приемы по ID врача
-                const filteredAdmissions = admissionsData.filter((admission: { doctorId: number; }) => admission.doctorId === doctorId);
-
-                setAdmission(filteredAdmissions);
-
-
-            } catch (error) {
-                console.error('Error fetching admissions:', error);
-            }
-        };
-
-        fetchAdmissionsByPatient();
-    }, [patient, doctorId]);
-
-
     const submitAdmission = async () => {
         const token = getCookie("accessToken");
         if (!params.id || !token) return;
@@ -78,7 +57,20 @@ const CreateAdmission = ({ params }: { params: { id: number } }) => {
         try {
             const decodedToken = decodeJWTToken(token);
 
-            const response = await fetch('http://localhost:8080/api/medical-reports/create', {
+            const responseAdmissions = await fetch(`http://localhost:8080/api/admissions/searchByPatient/${params.id}`);
+
+            if (!responseAdmissions.ok) {
+                throw new Error(`HTTP error! Status: ${responseAdmissions.status}`);
+            }
+
+            const admissionsData = await responseAdmissions.json();
+
+            let firstAdmissionId = 0;
+            if (admissionsData.filter((admission: { date: string | number | Date; patientId: number; }) => admission.patientId === params.id && admission.date === formattedDate)) {
+                firstAdmissionId = admissionsData[0].id;
+            }
+
+            const responseMedicalReport = await fetch('http://localhost:8080/api/medical-reports/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -87,24 +79,25 @@ const CreateAdmission = ({ params }: { params: { id: number } }) => {
                     doctorId: decodedToken.id,
                     patientId: params.id,
                     report: medReport?.report,
-                    admissionId: 2
-
+                    admissionId: firstAdmissionId,
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!responseMedicalReport.ok) {
+                throw new Error(`HTTP error! Status: ${responseMedicalReport.status}`);
             }
 
             console.log('Admission created successfully!');
-            console.log(decodedToken.id);
+            setSuccessMessage('Мед. заключение сохранено!');
+            setShowSuccessMessage(true);
+
 
         } catch (error) {
             console.error('Error:', error);
-
+            setErrorMessage('Произошла ошибка!');
+            setShowErrorMessage(true);
         }
     };
-
 
 
     return (
@@ -113,7 +106,6 @@ const CreateAdmission = ({ params }: { params: { id: number } }) => {
                 <div className={styles.info_doc}>
                     <h1 className={styles.card_H1}>Проведение приема</h1>
                     <p>Пациент: {patient?.lastName} {patient?.firstName}</p>
-
                     <textarea
                         value={medReport?.report}
                         onChange={(e) => setMedReport({ ...medReport, report: e.target.value, id: medReport?.id })}
@@ -122,16 +114,17 @@ const CreateAdmission = ({ params }: { params: { id: number } }) => {
                     />
                 </div>
                 <div>
-
-                </div>
-
-                <div>
                     <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>Записать данные</Button>
                 </div>
+                {showSuccessMessage && (
+                    <div className={styles.successMessage}>{successMessage}</div>
+                )}
+                {showErrorMessage && (
+                    <div className={styles.errorMessage}>{errorMessage}</div>
+                )}
             </div>
         </div>
-    )
-}
-
+    );
+};
 
 export default CreateAdmission;

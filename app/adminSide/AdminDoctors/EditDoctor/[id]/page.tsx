@@ -2,9 +2,15 @@
 
 
 import React, { useState, useEffect } from 'react';
+import styles from './EditDoctor.module.css'
+import { useRouter } from 'next/navigation';
 
 const EditDoctor = ({ params }: { params: { id: number } }) => {
     const [doctorData, setDoctorData] = useState<any>({});
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchDoctorData = async () => {
@@ -53,17 +59,26 @@ const EditDoctor = ({ params }: { params: { id: number } }) => {
             });
             if (!response.ok) {
                 throw new Error('Failed to update doctor data');
+
             }
-            console.log('Successfully');// надо сделать всплывающее сообщение об успешном сохранении
+            console.log('Successfully');
+            setSuccessMessage('Данные успешно обновлены!')
+            setShowSuccessMessage(true);
+
         } catch (error) {
             console.error('Error updating doctor:', error);
+            setSuccessMessage('Произошла ошибка при обновлении данных');
+            setShowErrorMessage(true);
         }
     };
 
     return (
         <div>
-            <h1>Редактирование доктора #{params.id}</h1>
-            <form onSubmit={handleSubmit}>
+            <button className={styles.return} onClick={() => router.back()}>
+                Назад
+            </button>
+            <form className={styles.formContainer} onSubmit={handleSubmit}>
+                <h1>Редактирование доктора #{params.id}</h1>
                 <label>
                     Имя:
                     <input type="text" name="firstName" value={doctorData.firstName || ''} onChange={handleInputChange} />
@@ -84,8 +99,13 @@ const EditDoctor = ({ params }: { params: { id: number } }) => {
                     Опыт работы:
                     <input type="text" name="work_experience" value={doctorData.work_experience || ''} onChange={handleInputChange} />
                 </label><br />
-                {/* Другие поля для редактирования */}
                 <button type="submit">Сохранить изменения</button>
+                {showSuccessMessage && (
+                    <div className={styles.successMessage}>{successMessage}</div>
+                )}
+                {showErrorMessage && (
+                    <div className={styles.errorMessage}>{successMessage}</div>
+                )}
             </form>
         </div>
     );

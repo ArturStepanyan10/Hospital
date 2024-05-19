@@ -7,23 +7,27 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Link from 'next/link';
+import { Schedule } from '../../../interfaces/schedules.interface';
+import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 
 const AdminSchedules = () => {
-    const [id, setId] = useState<number>();
     const [doctorId, setDoctorId] = useState<number>();
     const [startTime, setStartTime] = useState<string | null>(null);
     const [endTime, setEndTime] = useState<string | null>(null);
     const [scheduleDate, setScheduleDate] = useState<Date | null>(new Date());
     const [additionalInfo, setAdditionalInfo] = useState<string>("");
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const router = useRouter();
 
     const Today = new Date();
+    const formattedDate = format(Today, 'yyyy-MM-dd');
+
     const nextWeek = new Date();
     nextWeek.setDate(Today.getDate() + 3);
-
-    function handledIdSetSchedChange(e: ChangeEvent<HTMLInputElement>) {
-        setId(parseInt(e.target.value));
-    }
 
     function handledDoctorIdChange(e: ChangeEvent<HTMLInputElement>) {
         setDoctorId(parseInt(e.target.value));
@@ -45,8 +49,6 @@ const AdminSchedules = () => {
         setAdditionalInfo(e.target.value);
     }
 
-
-
     const submitAdmission = async () => {
         try {
 
@@ -56,7 +58,6 @@ const AdminSchedules = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id: id,
                     doctorId: doctorId,
                     startTime: startTime,
                     endTime: endTime,
@@ -69,12 +70,12 @@ const AdminSchedules = () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             console.log('Success!');
-
-            // Можно также обновить интерфейс или перенаправить пользователя на другую страницу
+            setSuccessMessage('Данные успешно обновлены!')
+            setShowSuccessMessage(true);
         } catch (error) {
             console.error('Error:', error);
-            // Обработка ошибки при создании записи на прием
-            // Можно вывести сообщение об ошибке или предложить повторить запрос
+            setSuccessMessage('Произошла ошибка при обновлении данных');
+            setShowErrorMessage(true);
         }
     };
 
@@ -99,54 +100,49 @@ const AdminSchedules = () => {
 
     const timeOptions = generateTimeOptions();
     return (
+        <><button className={styles.return} onClick={() => router.back()}>
+            Назад
+        </button><div className={styles.formContainer}>
 
-        <div className={styles.formContainer}>
-            <h1>Создание расписания</h1>
-            <form >
-                <Input
-                    onChange={handledIdSetSchedChange}
-                    type="text"
-                    placeholder="Расписание (id)"
-                    value={id !== undefined ? id.toString() : ''}
-                /> <br />
-                <Input
-                    onChange={handledDoctorIdChange}
-                    type="text"
-                    placeholder="Доктор (id)"
-                    value={doctorId !== undefined ? doctorId.toString() : ''}
-                /> <br />
+                <h1>Создание расписания</h1>
+                <form>
+                    <Input
+                        onChange={handledDoctorIdChange}
+                        type="text"
+                        placeholder="Доктор (id)"
+                        value={doctorId !== undefined ? doctorId.toString() : ''} /> <br />
 
-                <Select className={styles.sel} placeholder="Начало рабочего дня" options={timeOptions} onChange={handleStartTimeChange} />
-                <br />
-                <Select className={styles.sel} placeholder="Конец рабочего дня" options={timeOptions} onChange={handleEndTimeChange} />
-                <br />
-                <DatePicker
-                    className={styles.datePicker}
-                    selected={scheduleDate}
-                    onChange={handleScheduleDateChange}
-                    minDate={Today}
-                    maxDate={nextWeek}
+                    <Select className={styles.sel} placeholder="Начало рабочего дня" options={timeOptions} onChange={handleStartTimeChange} />
+                    <br />
+                    <Select className={styles.sel} placeholder="Конец рабочего дня" options={timeOptions} onChange={handleEndTimeChange} />
+                    <br />
+                    <DatePicker
+                        className={styles.datePicker}
+                        selected={scheduleDate}
+                        onChange={handleScheduleDateChange}
+                        minDate={Today}
+                        maxDate={nextWeek} /> <br />
+                    <Input
+                        onChange={handleAdditionalInfoChange}
+                        type="text"
+                        placeholder="Справочная информация"
+                        value={additionalInfo} />
 
-                /> <br />
-                <Input
-                    onChange={handleAdditionalInfoChange}
-                    type="text"
-                    placeholder="Справочная информация"
-                    value={additionalInfo}
-                />
-
-                <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
-                    Создать расписание
-                </Button>
-                <Link href=''>
-                    <p className={styles.up}>
-                        Изменить расписания
-                    </p></Link>
-                <Link href=''><p className={styles.del}>
-                    Удалить расписание
-                </p></Link>
-            </form>
-        </div>
+                    <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
+                        Создать расписание
+                    </Button>
+                    <Link href='/adminSide/AdminSchedules/EditSchedules'>
+                        <p className={styles.up}>
+                            Изменить расписания
+                        </p></Link>
+                    {showSuccessMessage && (
+                        <div className={styles.successMessage}>{successMessage}</div>
+                    )}
+                    {showErrorMessage && (
+                        <div className={styles.errorMessage}>{successMessage}</div>
+                    )}
+                </form>
+            </div></>
 
     )
 }

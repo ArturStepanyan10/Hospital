@@ -21,7 +21,6 @@
 }
 
 
-
 .card_H1 {
     text-align: center;
     padding-bottom: 14px;
@@ -54,4 +53,33 @@
     padding: 10px;
     margin-top: 10px;
     border-radius: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.errorMessage {
+    background-color: #832205;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.return {
+    margin-top: 20px;
+    width: 120px;
+    border-radius: 20px;
+    font-size: 16px;
+    height: 40px;
+    color: white;
+    background-color: #00CADE;
+    border: white;
+    cursor: pointer;
+}
+
+.return:hover {
+    transform: scale(0.95);
+    background-color: #11656d;
+    font-weight: 600;
 }

@@ -7,11 +7,12 @@ import { getServices } from '../../api';
 import styles from './AdminService.module.css'
 import Link from 'next/link';
 import { Button } from '../../../components';
+import { useRouter } from 'next/navigation';
 
 
 const AdminServices = () => {
     const [services, setServices] = useState<Service[]>([]);
-    const [successMessage, setSuccessMessage] = useState<string>('');
+    const router = useRouter();
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -27,6 +28,11 @@ const AdminServices = () => {
     }, []);
 
     const handleDeleteService = async (id: number) => {
+        const confirmed = window.confirm('Вы уверены, что хотите удалить эту услугу?');
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:8080/api/medical-service/delete/${id}`, {
                 method: 'DELETE',
@@ -34,10 +40,7 @@ const AdminServices = () => {
             if (!response.ok) {
                 throw new Error('Failed to delete service');
             }
-            setSuccessMessage('Пациент успешно удален');
-            setTimeout(() => {
-                setSuccessMessage('');
-            }, 3000); // Скрыть сообщение через 3 секунды
+
             const updatedServices = services.filter(service => service.id !== id);
             setServices(updatedServices);
         } catch (error) {
@@ -48,6 +51,9 @@ const AdminServices = () => {
     return (
         <>
             <div className={styles.headerContainer}>
+                <button className={styles.return} onClick={() => router.back()}>
+                    Назад
+                </button>
                 <h1>Услуги</h1>
                 <Link href='/adminSide/AdminServices/CreateServices'>
                     <Button className={styles.create} appearance='create'>

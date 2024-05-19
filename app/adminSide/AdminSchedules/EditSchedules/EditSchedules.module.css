@@ -1,18 +1,39 @@
-.card {
+.scheduleCard {
     border: 2px solid var(--bg-blue);
     border-radius: 15px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     padding: 16px;
     margin: 16px;
     width: calc(50% - 32px);
     box-sizing: border-box;
     display: inline-block;
-    position: relative;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     background: white;
+    position: relative;
+}
+
+.Input label {
+    padding: 20px;
+}
+
+.Input input[type="text"] {
+    padding: 10px;
+    border-radius: 20px;
+    width: 270px;
 }
 
 .button {
+    background-color: #23A7CF;
     border-radius: 20px;
+    border: #fff;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.button:hover {
+    background-color: #144553;
+    transform: scale(0.95);
 }
 
 .buttonForDel {
@@ -23,27 +44,31 @@
     border-radius: 20px;
 }
 
-.headerContainer {
-    display: flex;
-    align-items: center;
-}
-
 .create {
     margin-left: 20px;
     border-radius: 15px;
 }
 
-.return {
+.mess {
+    background-color: darkcyan;
+    width: 50%;
+    text-align: center;
+    border-radius: 20px;
+    color: white;
+    padding: 20px;
+}
 
+
+.return {
+    margin-top: 20px;
     width: 120px;
     border-radius: 20px;
     font-size: 16px;
     height: 40px;
     color: white;
-    background-color: #00CADE;
+    background-color: #15aab8;
     border: white;
     cursor: pointer;
-    margin-right: 20px;
 }
 
 .return:hover {

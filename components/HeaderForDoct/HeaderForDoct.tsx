@@ -45,7 +45,10 @@ export const HeaderForDoct = ({ className, ...props }: HeaderProps): JSX.Element
         if (confirmed) {
             eraseCookie("accessToken");
             console.log("Выход из аккаунта успешно выполнен!");
-            router.refresh();
+            if (typeof window !== 'undefined') {
+                router.push('/doctorSide');
+                setIsLogin(false);
+            }
         }
 
     }

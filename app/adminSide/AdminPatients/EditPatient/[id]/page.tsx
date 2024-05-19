@@ -1,11 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react';
+import styles from './EdtiPatient.module.css'
+import { useRouter } from 'next/navigation';
 
 
 const EditPatient = ({ params }: { params: { id: number } }) => {
     const [patientData, setPatientData] = useState<any>({});
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchPatientData = async () => {
@@ -55,23 +60,24 @@ const EditPatient = ({ params }: { params: { id: number } }) => {
                 throw new Error('Failed to update patient data');
             }
 
-            setSuccessMessage('Изменения успешно сохранены');
-            setTimeout(() => {
-                setSuccessMessage('');
-            }, 3000);
-            console.log('Successfully');// надо сделать всплывающее сообщение об успешном сохранении
+            setSuccessMessage('Данные успешно обновлены!')
+            setShowSuccessMessage(true);
+            console.log('Successfully');
         } catch (error) {
             console.error('Error updating patient data:', error);
+            setSuccessMessage('Произошла ошибка при обновлении данных');
+            setShowErrorMessage(true);
         }
     };
 
     return (
         <div>
-            {successMessage && (
-                <div className="success-message">{successMessage}</div>
-            )}
-            <h1>Редактирование пациента #{params.id}</h1>
-            <form onSubmit={handleSubmit}>
+            <button className={styles.return} onClick={() => router.back()}>
+                Назад
+            </button>
+
+            <form className={styles.formContainer} onSubmit={handleSubmit}>
+                <h1>Редактирование пациента #{params.id}</h1>
                 <label>
                     Имя:
                     <input type="text" name="firstName" value={patientData.firstName || ''} onChange={handleInputChange} />
@@ -93,6 +99,12 @@ const EditPatient = ({ params }: { params: { id: number } }) => {
                     <input type="text" name="snils" value={patientData.snils || ''} onChange={handleInputChange} />
                 </label><br />
                 <button type="submit">Сохранить изменения</button>
+                {showSuccessMessage && (
+                    <div className={styles.successMessage}>{successMessage}</div>
+                )}
+                {showErrorMessage && (
+                    <div className={styles.errorMessage}>{successMessage}</div>
+                )}
             </form>
         </div>
     );

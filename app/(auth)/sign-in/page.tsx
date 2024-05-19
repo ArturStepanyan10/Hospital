@@ -49,19 +49,19 @@ const SignIn: React.FC = () => {
 
                 if (userRoles === "ROLE_DOCTOR") {
                     setAccessToken(token);
-                    setCookie("accessToken", token, 2);
+                    setCookie("accessToken", token, 4);
                     setLoading(false);
                     router.push('/doctorSide');
 
                 } else if (userRoles === "ROLE_ADMIN") {
                     setAccessToken(token);
-                    setCookie("accessToken", token, 2);
+                    setCookie("accessToken", token, 4);
                     setLoading(false);
                     router.push('/adminSide');
 
                 } else if (userRoles === "ROLE_PATIENT") {
                     setAccessToken(token);
-                    setCookie("accessToken", token, 2);
+                    setCookie("accessToken", token, 4);
                     setLoading(false);
                     router.push('/');
                 }

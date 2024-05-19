@@ -69,7 +69,7 @@ const Register: React.FC = () => {
             .then(token => {
                 console.log("Successfully");
                 // Просто сохраняем токен как строку
-                setCookie("accessToken", token, 2);
+                setCookie("accessToken", token, 4);
                 router.push('./sign-in');
             })
             .catch(error => {
