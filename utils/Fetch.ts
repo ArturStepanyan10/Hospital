@@ -26,7 +26,6 @@ interface CredentialsRegisterDoctor {
 }
 
 
-
 export function postFetch(endpoint: URL | RequestInfo, bodyObj: CredentialsSignIn | CredentialsRegister |
     CredentialsRegisterDoctor) {
     return fetch(endpoint, {
@@ -38,13 +37,13 @@ export function postFetch(endpoint: URL | RequestInfo, bodyObj: CredentialsSignI
         body: JSON.stringify(bodyObj),
     }).then(res => {
         if (res.ok) {
-            return res.text(); // Возвращаем текст ответа
+            return res.text();
         } else {
             return res.text().then(error => Promise.reject(new Error(error)));
         }
     }).then(token => {
         if (!token) {
-            throw new Error('Bad credentials'); // Выбрасываем ошибку, если токен не передан
+            throw new Error('Bad credentials');
         }
         return token;
     }).catch(error => {

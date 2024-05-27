@@ -44,8 +44,8 @@ export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
         if (typeof window !== 'undefined') {
             const token = getCookie("accessToken");
             if (token) {
-                //const decodedToken = decodeJWTToken(token);
-                //setUserLastName(decodedToken.lastName);
+                const decodedToken = decodeJWTToken(token);
+                setUserLastName(decodedToken.lastName);
             }
         }
     }, []);

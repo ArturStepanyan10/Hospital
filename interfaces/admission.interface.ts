@@ -7,5 +7,5 @@ export interface Admission {
     patientId: number;
     serviceId: number;
     date: Date;
-    time: TimeRanges
+    time: string
 }

@@ -214,6 +214,9 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
 
     const submitAdmission = async () => {
         try {
+            setShowSuccessMessage(false);
+            setShowErrorMessage(false);
+
             if (!doctor) {
                 console.error('Doctor data is not yet available.');
                 return;
@@ -221,6 +224,8 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
 
             if (!selectedDate || !selectedTime) {
                 console.error('Please select date and time.');
+                setSuccessMessage('Пожалуйста, выберите дату и время.');
+                setShowErrorMessage(true);
                 return;
             }
 
@@ -231,7 +236,6 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                 setShowErrorMessage(true);
                 return;
             }
-
 
             const response = await fetch('http://localhost:8080/api/admissions/create', {
                 method: 'POST',
@@ -247,22 +251,18 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                 }),
             });
 
-
-
-
-            console.log('Admission created successfully!');
             if (response.ok) {
                 setSuccessMessage('Запись прошла успешно!');
                 setShowSuccessMessage(true);
             } else {
                 setSuccessMessage('На это время у врача уже есть запись.');
                 setShowErrorMessage(true);
-
             }
-
 
         } catch (error) {
             console.error('Error:', error);
+            setSuccessMessage('Произошла ошибка при записи.');
+            setShowErrorMessage(true);
         }
     };
 
@@ -288,13 +288,10 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                             minDate={Today}
                             maxDate={nextWeek} />
                     </div>
-
                     <div>
                         <label className={styles.label_card}>Время:</label>
                         <Select className={styles.sel} options={timeOptions} onChange={handleTimeChange} />
                     </div>
-
-
                     <Button type='submit' className={styles.button} onClick={submitAdmission} appearance='primary'>
                         Записаться
                     </Button>
@@ -305,6 +302,7 @@ export const Admission: React.FC<IdProps> = ({ id }) => {
                         <div className={styles.errorMessage}>{successMessage}</div>
                     )}
                 </div>
-            </div></>
+            </div>
+        </>
     );
 };

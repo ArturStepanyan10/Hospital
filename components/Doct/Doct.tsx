@@ -13,7 +13,7 @@ export const Doct: React.FC<Doctor> = ({ id, firstName, lastName, work_experienc
             <div className={styles.doctorInfo}>
                 <div>
                     <h2 className={styles.doctorName}>{`${lastName} ${firstName}`}</h2>
-                    <p className={styles.doctorText}>Стаж работы: {`${work_experience}`} years</p>
+                    <p className={styles.doctorText}>Стаж работы: {`${work_experience}`}</p>
                     <p className={styles.doctorText}>Должность: {position}</p>
                     <p className={styles.doctorText}>Кабинет: №{office}</p>
                 </div>

@@ -26,7 +26,7 @@ export const Services = () => {
     return (
         <>
             {error && <p>{error}</p>}
-            {services.slice(1).map((service) => ( // Исключаем первую услугу из вывода
+            {services.slice(1).map((service) => (
                 <Servic key={service.id} {...service} />
             ))}
         </>

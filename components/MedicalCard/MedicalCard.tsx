@@ -17,7 +17,6 @@ export const MedicalCard = () => {
     const [medReport, setMedReport] = useState<MedicalReport[]>([]);
     const [doctor, setDoctor] = useState<Doctor[]>([]);
 
-
     useEffect(() => {
         const fetchPatient = async () => {
             const token = getCookie("accessToken");
@@ -73,16 +72,14 @@ export const MedicalCard = () => {
                 }
 
                 const medReportData = await response.json();
-
                 setMedReport(medReportData);
             } catch (error) {
-                console.error('Error fetching admissions:', error);
+                console.error('Error fetching medical reports:', error);
             }
         };
 
         fetchMedReportByPatient();
     }, [patient]);
-
 
     useEffect(() => {
         const fetchDoctors = async () => {
@@ -93,9 +90,12 @@ export const MedicalCard = () => {
         fetchDoctors();
     }, []);
 
-    const isPastAppointment = (dateString: string | number | Date) => {
+    const isPastAppointment = (dateString: Date, timeString: string) => {
+        const [hours, minutes] = timeString.split(':').map(Number);
         const appointmentDate = new Date(dateString);
+        appointmentDate.setHours(hours, minutes);
         const currentDate = new Date();
+
         return appointmentDate < currentDate;
     };
 
@@ -113,12 +113,12 @@ export const MedicalCard = () => {
                 <h2>Ближайшие приемы:</h2>
                 {admissions.map(admission => (
                     <div key={admission.id}>
-                        {!isPastAppointment(admission.date) && (
+                        {!isPastAppointment(admission.date, admission.time) && (
                             <div>
                                 {doctor.find(d => d.id === admission.doctorId) && (
                                     <p className={styles.doctorInfo}>Доктор: {doctor.find(d => d.id === admission.doctorId)?.lastName} {doctor.find(d => d.id === admission.doctorId)?.firstName}</p>
                                 )}
-                                <p>Дата и время: {new Date(admission.date).toLocaleDateString()} {admission.time.toString()}</p>
+                                <p>Дата и время: {new Date(admission.date).toLocaleDateString()} {admission.time}</p>
                             </div>
                         )}
                     </div>
@@ -130,20 +130,17 @@ export const MedicalCard = () => {
                 <h2>Прошедшие приемы:</h2>
                 {admissions.map(admission => (
                     <div key={admission.id}>
-                        {isPastAppointment(admission.date) && (
+                        {isPastAppointment(admission.date, admission.time) && (
                             <div>
                                 {doctor.find(d => d.id === admission.doctorId) && (
                                     <p className={styles.doctorInfo}>Доктор: {doctor.find(d => d.id === admission.doctorId)?.lastName} {doctor.find(d => d.id === admission.doctorId)?.firstName}</p>
                                 )}
-                                <p>Дата и время: {new Date(admission.date).toLocaleDateString()} {admission.time.toString()}</p>
+                                <p>Дата и время: {new Date(admission.date).toLocaleDateString()} {admission.time}</p>
 
                                 {medReport.find(r => r.admissionId === admission.id) && (
-                                    <p>Результаты приема: {medReport.find(r => r.admissionId === admission.id)?.report}</p>)}
-
+                                    <p>Результаты приема: {medReport.find(r => r.admissionId === admission.id)?.report}</p>
+                                )}
                             </div>
-
-
-
                         )}
                     </div>
                 ))}
